@@ -36,12 +36,10 @@ public class IntegratedGraph extends SingleGraph {
 		Scanner myReader = new Scanner(myObj);
 		while (myReader.hasNextLine()) {
 			String data = myReader.nextLine();
-			String startnode = String.valueOf(data.charAt(0));
-			for (int i = 2; i < data.length(); i++) {
-				if (data.charAt(i) != ' ') {
-					String nextnode = String.valueOf(data.charAt(i));
-					addEdge(startnode + nextnode, startnode, nextnode, true);
-				}
+			String[] dataNode = data.split(" ");
+			String startnode = String.valueOf(dataNode[0]);
+			for (int i = 1; i < dataNode.length; i++) {
+					addEdge(startnode + dataNode[i], startnode, dataNode[i], true);
 			}
 		}
 		myReader.close();
