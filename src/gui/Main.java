@@ -35,16 +35,7 @@ public class Main extends JFrame {
 
 		Viewer viewer = graph.display();
 
-		for (int i = 0; i < 10; ++i) {
-			for (int j = 0; j < 10; ++j) {
-				if (i == j) {
-					continue;
-				}
-				String ida = Character.toString(i + 65);
-				String idb = Character.toString(j + 65);
-				graph.addEdge(ida + idb, ida, idb);
-			}
-		}
+		graph.loadFromFile("inputs/input.txt");
 
 		for (Node n : graph) {
 			n.setAttribute("ui.label", n.getId());
