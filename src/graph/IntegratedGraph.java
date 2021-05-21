@@ -13,6 +13,9 @@ import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 
 public class IntegratedGraph extends SingleGraph {
+	private static int hasPath = 0;
+	private static int[] D;
+	private static int[] L;
 
 	public IntegratedGraph(String id, boolean strictChecking, boolean autoCreate, int initialNodeCapacity,
 			int initialEdgeCapacity) {
@@ -43,11 +46,13 @@ public class IntegratedGraph extends SingleGraph {
 					addEdge(startnode + nextnode, startnode, nextnode, true);
 				}
 			}
+
 		}
+
 		myReader.close();
 	}
 
-	public List<List<Edge>> findAllPath(Node source, Node destination) {
+	public List<List<Edge>> findAllPath(String source, String destination) {
 		List<List<Edge>> paths = new ArrayList<List<Edge>>();
 		// TODO
 		int[][] arr = new int[getNodeCount()][getNodeCount()];
@@ -57,18 +62,59 @@ public class IntegratedGraph extends SingleGraph {
 			}
 
 		}
+		nodes().forEach(s -> {
+
+		});
 		edges().forEach(s -> {
+//			System.out.println(s.getSourceNode().getId());
+//			System.out.println(s.getTargetNode().getId());
 			String getedge = s.getId();
 			arr[Integer.parseInt(String.valueOf(getedge.charAt(0))) - 1][Integer
 					.parseInt(String.valueOf(getedge.charAt(1))) - 1] = 1;
 		});
-		for (int i = 0; i < arr.length; i++) {
-			for (int j = 0; j < arr.length; j++) {
-				System.out.print(arr[i][j]);
-			}
-			System.out.println();
+
+//		for (int i = 0; i < arr.length; i++) {
+//			for (int j = 0; j < arr.length; j++) {
+//				System.out.print(arr[i][j]);
+//			}
+//			System.out.println();
+//		}
+		int start = Integer.parseInt(source) - 1;
+		int end = Integer.parseInt(destination) - 1;
+		D = new int[getNodeCount()];
+		L = new int[getNodeCount()];
+		for (int i = 0; i < getNodeCount(); i++) {
+			D[i] = 0;
+			L[i] = 0;
+		}
+		D[start] = 1;
+		L[0] = start;
+		checkPath(1, end, arr);
+		if (hasPath == 0) {
+			System.out.println("No Path From " + (start + 1) + " to " + (end + 1));
 		}
 		return paths;
+	}
+
+	public void checkPath(int number_edge, int end, int[][] arr) {
+		if (L[number_edge - 1] == end) {
+			hasPath++;
+			System.out.println("Path:");
+			System.out.print(L[0] + 1);
+			for (int i = 1; i < number_edge; ++i)
+				System.out.print("->" +(L[i] + 1));
+			System.out.println();
+		} else {
+			for (int i = 0; i < getNodeCount(); ++i) {
+				if (arr[L[number_edge - 1]][i] != 0 && D[i] == 0) {
+					L[number_edge] = i;
+					D[i] = 1;
+					checkPath(number_edge + 1, end, arr);
+					L[number_edge] = 0;
+					D[i] = 0;
+				}
+			}
+		}
 	}
 
 	public void toImage(String name) {
