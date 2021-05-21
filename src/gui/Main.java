@@ -34,8 +34,11 @@ public class Main extends JFrame {
 		graph.setAttribute("ui.stylesheet", "url('file://bin/gui/graph.css')");
 
 		Viewer viewer = graph.display();
-
-		graph.loadFromFile("inputs/input.txt");
+		try {
+			graph.loadFromFile("inputs/input.txt");
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 
 		for (Node n : graph) {
 			n.setAttribute("ui.label", n.getId());

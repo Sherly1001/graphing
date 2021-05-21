@@ -9,7 +9,6 @@ import java.lang.reflect.Array;
 import java.util.Scanner; // Import the Scanner class to read text files
 import java.util.Stack;
 
-
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 
@@ -31,53 +30,44 @@ public class IntegratedGraph extends SingleGraph {
 		// TODO Auto-generated constructor stub
 	}
 
-	public void loadFromFile(String filePath) {
+	public void loadFromFile(String filePath) throws FileNotFoundException {
 		// TODO
-		try {
-			File myObj = new File(filePath);
-			Scanner myReader = new Scanner(myObj);
-			while (myReader.hasNextLine()) {
-				String data = myReader.nextLine();
-				String startnode = String.valueOf(data.charAt(0));
-				for (int i = 2; i < data.length(); i++) {
-					if (data.charAt(i) != ' ') {
-						String nextnode = String.valueOf(data.charAt(i));
-						addEdge(startnode + nextnode, startnode, nextnode, true);
-					}
+		File myObj = new File(filePath);
+		Scanner myReader = new Scanner(myObj);
+		while (myReader.hasNextLine()) {
+			String data = myReader.nextLine();
+			String startnode = String.valueOf(data.charAt(0));
+			for (int i = 2; i < data.length(); i++) {
+				if (data.charAt(i) != ' ') {
+					String nextnode = String.valueOf(data.charAt(i));
+					addEdge(startnode + nextnode, startnode, nextnode, true);
 				}
 			}
-			int[][] arr = new int[getNodeCount()][getNodeCount()];
-			for (int i = 0; i < arr.length; i++) {
-				for (int j = 0; j < arr.length; j++) {
-					arr[i][j] = 0;
-				}
-
-			}
-			edges().forEach(s -> {
-				String getedge = s.getId();
-				arr[Integer.parseInt(String.valueOf(getedge.charAt(0))) - 1][Integer
-						.parseInt(String.valueOf(getedge.charAt(1))) - 1] = 1;
-			});
-			for (int i = 0; i < arr.length; i++) {
-				for (int j = 0; j < arr.length; j++) {
-					System.out.print(arr[i][j]);
-				}
-				System.out.println();
-			}
-		} catch (FileNotFoundException e) {
-			System.out.println("An error occurred.");
-			e.printStackTrace();
 		}
-//		 for (Node n : graph) {
-//				n.setAttribute("ui.label", n.getId());
-//			}
-//		 graph.display();
+		myReader.close();
 	}
 
 	public List<List<Edge>> findAllPath(Node source, Node destination) {
 		List<List<Edge>> paths = new ArrayList<List<Edge>>();
 		// TODO
+		int[][] arr = new int[getNodeCount()][getNodeCount()];
+		for (int i = 0; i < arr.length; i++) {
+			for (int j = 0; j < arr.length; j++) {
+				arr[i][j] = 0;
+			}
 
+		}
+		edges().forEach(s -> {
+			String getedge = s.getId();
+			arr[Integer.parseInt(String.valueOf(getedge.charAt(0))) - 1][Integer
+					.parseInt(String.valueOf(getedge.charAt(1))) - 1] = 1;
+		});
+		for (int i = 0; i < arr.length; i++) {
+			for (int j = 0; j < arr.length; j++) {
+				System.out.print(arr[i][j]);
+			}
+			System.out.println();
+		}
 		return paths;
 	}
 
