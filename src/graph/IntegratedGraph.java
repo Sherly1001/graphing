@@ -9,7 +9,6 @@ import java.lang.reflect.Array;
 import java.util.Scanner; // Import the Scanner class to read text files
 import java.util.Stack;
 
-import org.graphstream.graph.*;
 
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
