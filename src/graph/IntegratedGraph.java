@@ -13,7 +13,9 @@ import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 
 public class IntegratedGraph extends SingleGraph {
-	private static int hasPath = 0;
+	private int hasPath = 0;
+	private int start = 0;
+	private int end = 0;
 	private static int[] D;
 	private static int[] L;
 
@@ -42,7 +44,7 @@ public class IntegratedGraph extends SingleGraph {
 			String[] dataNode = data.split(" ");
 			String startnode = String.valueOf(dataNode[0]);
 			for (int i = 1; i < dataNode.length; i++) {
-					addEdge(startnode + dataNode[i], startnode, dataNode[i], true);
+				addEdge(startnode + dataNode[i], startnode, dataNode[i], true);
 			}
 
 		}
@@ -61,14 +63,16 @@ public class IntegratedGraph extends SingleGraph {
 
 		}
 		nodes().forEach(s -> {
-
+			System.out.print(s.getId() + " ");
+			System.out.println(s.getIndex());
 		});
 		edges().forEach(s -> {
-//			System.out.println(s.getSourceNode().getId());
-//			System.out.println(s.getTargetNode().getId());
-			String getedge = s.getId();
-			arr[Integer.parseInt(String.valueOf(getedge.charAt(0))) - 1][Integer
-					.parseInt(String.valueOf(getedge.charAt(1))) - 1] = 1;
+//			System.out.print(s.getSourceNode().getId());
+			// System.out.print(" "+s.getTargetNode() + " ");
+//			String getedge = s.getId();
+			// arr[Integer.parseInt(s.getSourceNode().getId())][Integer.parseInt(s.getTargetNode().getId())]
+			// = 1;
+			arr[s.getSourceNode().getIndex()][s.getTargetNode().getIndex()] = 1;
 		});
 
 //		for (int i = 0; i < arr.length; i++) {
@@ -77,8 +81,16 @@ public class IntegratedGraph extends SingleGraph {
 //			}
 //			System.out.println();
 //		}
-		int start = Integer.parseInt(source) - 1;
-		int end = Integer.parseInt(destination) - 1;
+//		int start = 0;
+//		int end = 0;
+		nodes().forEach(s -> {
+			if (s.getId().equals(source)) {
+				start = s.getIndex();
+			}
+			if (s.getId().equals(destination)) {
+				end = s.getIndex();
+			}
+		});
 		D = new int[getNodeCount()];
 		L = new int[getNodeCount()];
 		for (int i = 0; i < getNodeCount(); i++) {
@@ -89,7 +101,7 @@ public class IntegratedGraph extends SingleGraph {
 		L[0] = start;
 		checkPath(1, end, arr);
 		if (hasPath == 0) {
-			System.out.println("No Path From " + (start + 1) + " to " + (end + 1));
+			System.out.println("No Path From " + (getNode(start).getId()) + " to " + (getNode(end).getId()));
 		}
 		return paths;
 	}
@@ -98,9 +110,9 @@ public class IntegratedGraph extends SingleGraph {
 		if (L[number_edge - 1] == end) {
 			hasPath++;
 			System.out.println("Path:");
-			System.out.print(L[0] + 1);
+			System.out.print(getNode(L[0]).getId());
 			for (int i = 1; i < number_edge; ++i)
-				System.out.print("->" +(L[i] + 1));
+				System.out.print("->" + getNode(L[i]).getId());
 			System.out.println();
 		} else {
 			for (int i = 0; i < getNodeCount(); ++i) {
