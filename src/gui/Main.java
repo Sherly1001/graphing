@@ -39,7 +39,7 @@ public class Main extends JFrame {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		graph.findAllPath("6", "12");
+		graph.findAllPath("2", "12");
 
 		for (Node n : graph) {
 			n.setAttribute("ui.label", n.getId());

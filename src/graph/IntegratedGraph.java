@@ -101,7 +101,7 @@ public class IntegratedGraph extends SingleGraph {
 		L[0] = start;
 		checkPath(1, end, arr);
 		if (hasPath == 0) {
-			System.out.println("No Path From " + (start + 1) + " to " + (end + 1));
+			System.out.println("No Path From " + (getNode(start).getId()) + " to " + (getNode(end).getId()));
 		}
 		return paths;
 	}
