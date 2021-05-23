@@ -22,7 +22,5 @@ edge {
 }
 
 edge.red {
-  shape: cubic-curve;
-  size: 2;
   fill-color: red;
 }
