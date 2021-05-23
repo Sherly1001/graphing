@@ -6,6 +6,8 @@ import org.graphstream.graph.*;
 import org.graphstream.ui.swing_viewer.*;
 import org.graphstream.ui.view.Viewer;
 
+import event.LogEvent;
+import event.LogListener;
 import graph.IntegratedGraph;
 
 public class Main extends JFrame {
@@ -13,8 +15,8 @@ public class Main extends JFrame {
 	private IntegratedGraph graph = new IntegratedGraph("Graphing", false, true);
 
 	private Container ctn = getContentPane();
-	private JPanel controlPanel = new ControlPanel(graph);
-	private JPanel logPanel = new JPanel();
+	private ControlPanel controlPanel = new ControlPanel(graph);
+	private LogPanel logPanel = new LogPanel(graph);
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -33,6 +35,16 @@ public class Main extends JFrame {
 		graph.setAttribute("ui.quality");
 		graph.setAttribute("ui.antialias");
 		graph.setAttribute("ui.stylesheet", "url('file://bin/gui/graph.css')");
+
+		LogEvent.addLogListener(new LogListener() {
+			@Override
+			public void run(LogEvent e) {
+				// TODO Auto-generated method stub
+				if (e.cause == LogEvent.Cause.INFO) {
+					System.out.println("INFO: " + e.message);
+				}
+			}
+		});
 
 		Viewer viewer = graph.display();
 		try {

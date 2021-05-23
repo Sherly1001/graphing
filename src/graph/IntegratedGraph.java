@@ -12,6 +12,8 @@ import java.util.Stack;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 
+import event.LogEvent;
+
 public class IntegratedGraph extends SingleGraph {
 	private int hasPath = 0;
 	private int start = 0;
@@ -62,10 +64,6 @@ public class IntegratedGraph extends SingleGraph {
 			}
 
 		}
-		nodes().forEach(s -> {
-			System.out.print(s.getId() + " ");
-			System.out.println(s.getIndex());
-		});
 		edges().forEach(s -> {
 //			System.out.print(s.getSourceNode().getId());
 			// System.out.print(" "+s.getTargetNode() + " ");
@@ -101,7 +99,8 @@ public class IntegratedGraph extends SingleGraph {
 		L[0] = start;
 		checkPath(1, end, arr);
 		if (hasPath == 0) {
-			System.out.println("No Path From " + (getNode(start).getId()) + " to " + (getNode(end).getId()));
+			LogEvent.emitLogEvent(
+					new LogEvent(LogEvent.Cause.INFO, "No Path From " + getNode(start) + " to " + getNode(end)));
 		}
 		return paths;
 	}
@@ -109,11 +108,10 @@ public class IntegratedGraph extends SingleGraph {
 	public void checkPath(int number_edge, int end, int[][] arr) {
 		if (L[number_edge - 1] == end) {
 			hasPath++;
-			System.out.println("Path:");
-			System.out.print(getNode(L[0]).getId());
+			String msg = "Path:" + getNode(L[0]);
 			for (int i = 1; i < number_edge; ++i)
-				System.out.print("->" + getNode(L[i]).getId());
-			System.out.println();
+				msg += "->" + getNode(L[i]);
+			LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, msg));
 		} else {
 			for (int i = 0; i < getNodeCount(); ++i) {
 				if (arr[L[number_edge - 1]][i] != 0 && D[i] == 0) {
