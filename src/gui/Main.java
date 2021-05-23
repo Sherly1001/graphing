@@ -14,6 +14,7 @@ public class Main extends JFrame {
 
 	private Container ctn = getContentPane();
 	private JPanel controlPanel = new ControlPanel(graph);
+	private JPanel logPanel = new JPanel();
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -50,20 +51,28 @@ public class Main extends JFrame {
 
 		controlPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "controler"));
 
-		gbc.gridx = gbc.gridy = 0;
+		gbc.gridx = 1;
+		gbc.gridy = 0;
 		gbc.gridwidth = gbc.gridheight = 1;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.weightx = 30;
-		gbc.weighty = 100;
+		gbc.weighty = 70;
 		ctn.add(controlPanel, gbc);
 
 		ViewPanel view = (ViewPanel) viewer.getDefaultView();
 		view.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "graph"));
 
-		gbc.gridx = 1;
+		gbc.gridx = 0;
 		gbc.weightx = 70;
 		ctn.add(view, gbc);
+
+		logPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "logs"));
+
+		gbc.gridy = 1;
+		gbc.gridwidth = 2;
+		gbc.weighty = 30;
+		ctn.add(logPanel, gbc);
 
 		setVisible(true);
 		setSize(860, 640);
