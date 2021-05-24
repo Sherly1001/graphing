@@ -46,7 +46,9 @@ public class Main extends JFrame {
 			}
 		});
 
-		Viewer viewer = graph.display();
+		Viewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
+		viewer.enableAutoLayout();
+
 		try {
 			graph.loadFromFile("inputs/input.txt");
 		} catch (Exception e) {
@@ -72,7 +74,7 @@ public class Main extends JFrame {
 		gbc.weighty = 70;
 		ctn.add(controlPanel, gbc);
 
-		ViewPanel view = (ViewPanel) viewer.getDefaultView();
+		ViewPanel view = (ViewPanel) viewer.addDefaultView(false);
 		view.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "graph"));
 
 		gbc.gridx = 0;
