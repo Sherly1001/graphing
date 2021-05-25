@@ -17,7 +17,7 @@ public class Main extends JFrame {
 	private Container ctn = getContentPane();
 	private ControlPanel controlPanel = new ControlPanel(graph);
 	private LogPanel logPanel = new LogPanel(graph);
-
+	private importFile importFile = new importFile();
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -50,7 +50,7 @@ public class Main extends JFrame {
 		viewer.enableAutoLayout();
 
 		try {
-			graph.loadFromFile("inputs/input.txt");
+			graph.loadFromFile(importFile.getUrl());
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
