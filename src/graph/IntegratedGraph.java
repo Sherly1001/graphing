@@ -2,12 +2,16 @@ package graph;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.File; // Import the File class
 import java.io.FileNotFoundException; // Import this class to handle errors
-import java.lang.reflect.Array;
+import java.io.IOException;
 import java.util.Scanner; // Import the Scanner class to read text files
-import java.util.Stack;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
 
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
@@ -125,9 +129,25 @@ public class IntegratedGraph extends SingleGraph {
 		}
 	}
 
-	public void toImage(String name) {
-		// TODO
+	public void exportImg(JPanel view) throws IOException {
 
+		final JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+
+		int result = fileChooser.showSaveDialog(fileChooser);
+		if (result == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = fileChooser.getSelectedFile();
+			BufferedImage image = new BufferedImage(view.getSize().width, view.getSize().height,
+					BufferedImage.TYPE_INT_RGB);
+			Graphics2D g2 = image.createGraphics();
+			view.paint(g2);
+			try {
+				ImageIO.write(image, "png", new File(selectedFile.getAbsolutePath() + ".png"));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.*;
+import java.io.IOException;
+
 import javax.swing.*;
 import org.graphstream.graph.*;
 import org.graphstream.ui.swing_viewer.*;
@@ -36,16 +38,6 @@ public class Main extends JFrame {
 		graph.setAttribute("ui.antialias");
 		graph.setAttribute("ui.stylesheet", "url('file://bin/gui/graph.css')");
 
-		LogEvent.addLogListener(new LogListener() {
-			@Override
-			public void run(LogEvent e) {
-				// TODO Auto-generated method stub
-				if (e.cause == LogEvent.Cause.INFO) {
-					System.out.println("INFO: " + e.message);
-				}
-			}
-		});
-
 		Viewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
 		viewer.enableAutoLayout();
 
@@ -76,7 +68,6 @@ public class Main extends JFrame {
 
 		ViewPanel view = (ViewPanel) viewer.addDefaultView(false);
 		view.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "graph"));
-
 		gbc.gridx = 0;
 		gbc.weightx = 70;
 		ctn.add(view, gbc);
@@ -92,5 +83,22 @@ public class Main extends JFrame {
 		setSize(860, 640);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		LogEvent.addLogListener(new LogListener() {
+			@Override
+			public void run(LogEvent e) {
+				// TODO Auto-generated method stub
+				if (e.cause == LogEvent.Cause.INFO) {
+					System.out.println("INFO: " + e.message);
+				} else if (e.cause == LogEvent.Cause.EXPORT_IMAGE) {
+					try {
+						graph.exportImg(view);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
 	}
 }
