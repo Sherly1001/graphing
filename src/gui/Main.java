@@ -17,6 +17,7 @@ public class Main extends JFrame {
 	private Container ctn = getContentPane();
 	private ControlPanel controlPanel = new ControlPanel(graph);
 	private LogPanel logPanel = new LogPanel(graph);
+
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -50,10 +51,10 @@ public class Main extends JFrame {
 
 		try {
 			graph.loadFromFile(ImportFile.getUrl());
+			graph.findAllPath("2", "12");
 		} catch (Exception e) {
-			// TODO: handle exception
+			System.out.println(e);
 		}
-		graph.findAllPath("2", "12");
 
 		for (Node n : graph) {
 			n.setAttribute("ui.label", n.getId());
