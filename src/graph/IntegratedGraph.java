@@ -65,22 +65,9 @@ public class IntegratedGraph extends SingleGraph {
 
 		}
 		edges().forEach(s -> {
-//			System.out.print(s.getSourceNode().getId());
-			// System.out.print(" "+s.getTargetNode() + " ");
-//			String getedge = s.getId();
-			// arr[Integer.parseInt(s.getSourceNode().getId())][Integer.parseInt(s.getTargetNode().getId())]
-			// = 1;
 			arr[s.getSourceNode().getIndex()][s.getTargetNode().getIndex()] = 1;
 		});
 
-//		for (int i = 0; i < arr.length; i++) {
-//			for (int j = 0; j < arr.length; j++) {
-//				System.out.print(arr[i][j]);
-//			}
-//			System.out.println();
-//		}
-//		int start = 0;
-//		int end = 0;
 		nodes().forEach(s -> {
 			if (s.getId().equals(source)) {
 				start = s.getIndex();
@@ -97,32 +84,30 @@ public class IntegratedGraph extends SingleGraph {
 		}
 		D[start] = 1;
 		L[0] = start;
-		checkPath(1, end, arr);
-		if (hasPath == 0) {
-			LogEvent.emitLogEvent(
-					new LogEvent(LogEvent.Cause.INFO, "No Path From " + getNode(start) + " to " + getNode(end)));
-		}
+		checkPath(1, end, arr, paths);
 		return paths;
 	}
 
-	public void checkPath(int number_edge, int end, int[][] arr) {
+	public void checkPath(int number_edge, int end, int[][] arr, List<List<Edge>> paths) {
+		List<Edge> pathsSon = new ArrayList<Edge>();
 		if (L[number_edge - 1] == end) {
 			hasPath++;
-			String msg = "Path:" + getNode(L[0]);
-			for (int i = 1; i < number_edge; ++i)
-				msg += "->" + getNode(L[i]);
-			LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, msg));
+			for (int i = 1; i < number_edge; ++i) {
+				Edge edge = getNode(L[i - 1]).getEdgeBetween(getNode(L[i]));
+				pathsSon.add(edge);
+			}
 		} else {
 			for (int i = 0; i < getNodeCount(); ++i) {
 				if (arr[L[number_edge - 1]][i] != 0 && D[i] == 0) {
 					L[number_edge] = i;
 					D[i] = 1;
-					checkPath(number_edge + 1, end, arr);
+					checkPath(number_edge + 1, end, arr, paths);
 					L[number_edge] = 0;
 					D[i] = 0;
 				}
 			}
 		}
+		paths.add(pathsSon);
 	}
 
 	public void toImage(String name) {
