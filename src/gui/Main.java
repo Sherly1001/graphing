@@ -1,12 +1,17 @@
 package gui;
 
 import java.awt.*;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.IOException;
 
 import javax.swing.*;
 import org.graphstream.graph.*;
+import org.graphstream.ui.geom.Point2;
+import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.swing_viewer.*;
 import org.graphstream.ui.view.Viewer;
+import org.graphstream.ui.view.camera.Camera;
 
 import event.LogEvent;
 import event.LogListener;
@@ -40,7 +45,9 @@ public class Main extends JFrame {
 
 		Viewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
 		viewer.enableAutoLayout();
-
+		
+		
+		
 		try {
 			graph.loadFromFile(ImportFile.getUrl());
 			graph.findAllPath("2", "12");
@@ -71,7 +78,26 @@ public class Main extends JFrame {
 		gbc.gridx = 0;
 		gbc.weightx = 70;
 		ctn.add(view, gbc);
-
+	
+		view.getCamera().setViewPercent(1);
+		view.addMouseWheelListener(new MouseWheelListener() {
+		    @Override
+		    public void mouseWheelMoved(MouseWheelEvent e) {
+		        e.consume();
+		        int i = e.getWheelRotation();
+		        double factor = Math.pow(1.25, i);
+		        Camera cam = view.getCamera();
+		        double zoom = cam.getViewPercent() * factor;
+		        Point2 pxCenter  = cam.transformGuToPx(cam.getViewCenter().x, cam.getViewCenter().y, 0);
+		        Point3 guClicked = cam.transformPxToGu(e.getX(), e.getY());
+		        double newRatioPx2Gu = cam.getMetrics().ratioPx2Gu/factor;
+		        double x = guClicked.x + (pxCenter.x - e.getX())/newRatioPx2Gu;
+		        double y = guClicked.y - (pxCenter.y - e.getY())/newRatioPx2Gu;
+		        cam.setViewCenter(x, y, 0);
+		        cam.setViewPercent(zoom);
+		    }
+		});
+		
 		logPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "logs"));
 
 		gbc.gridy = 1;
@@ -84,6 +110,8 @@ public class Main extends JFrame {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+		
+		
 		LogEvent.addLogListener(new LogListener() {
 			@Override
 			public void run(LogEvent e) {
