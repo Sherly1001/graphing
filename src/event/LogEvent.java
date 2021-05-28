@@ -5,12 +5,17 @@ import java.util.ArrayList;
 
 public class LogEvent {
 	public enum Cause {
-		INFO, ERROR
+		INFO, ERROR, LOAD_FILE
 	}
 
 	private static final List<LogListener> listeners = new ArrayList<>();
 	public Cause cause;
 	public String message;
+
+	public LogEvent(Cause cause) {
+		this.message = "";
+		this.cause = cause;
+	}
 
 	public LogEvent(Cause cause, String message) {
 		this.cause = cause;
