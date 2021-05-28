@@ -19,6 +19,7 @@ import org.graphstream.graph.implementations.*;
 import event.LogEvent;
 
 public class IntegratedGraph extends SingleGraph {
+
 	private int hasPath = 0;
 	private int start = 0;
 	private int end = 0;
@@ -148,6 +149,11 @@ public class IntegratedGraph extends SingleGraph {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void findPath() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

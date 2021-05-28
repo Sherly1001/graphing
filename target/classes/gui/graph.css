@@ -1,0 +1,26 @@
+node {
+  size: 40;
+  fill-color: #eee;
+  stroke-mode: plain;
+  stroke-width: 2;
+  stroke-color: #555;
+  text-size: 20;
+}
+
+node:clicked {
+	fill-color: yellow;
+}
+
+node.marked {
+  fill-color: green;
+}
+
+edge {
+  shape: cubic-curve;
+  size: 2;
+  fill-color: #888;
+}
+
+edge.red {
+  fill-color: red;
+}
