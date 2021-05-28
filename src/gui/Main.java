@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.*;
+import java.io.IOException;
+
 import javax.swing.*;
 import org.graphstream.graph.*;
 import org.graphstream.ui.swing_viewer.*;
@@ -76,7 +78,6 @@ public class Main extends JFrame {
 
 		ViewPanel view = (ViewPanel) viewer.addDefaultView(false);
 		view.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "graph"));
-
 		gbc.gridx = 0;
 		gbc.weightx = 70;
 		ctn.add(view, gbc);
@@ -92,5 +93,11 @@ public class Main extends JFrame {
 		setSize(860, 640);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		try {
+			graph.exportImg(view);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 }
