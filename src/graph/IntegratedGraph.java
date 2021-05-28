@@ -89,13 +89,14 @@ public class IntegratedGraph extends SingleGraph {
 	}
 
 	public void checkPath(int number_edge, int end, int[][] arr, List<List<Edge>> paths) {
-		List<Edge> pathsSon = new ArrayList<Edge>();
 		if (L[number_edge - 1] == end) {
 			hasPath++;
+			List<Edge> path = new ArrayList<Edge>();
 			for (int i = 1; i < number_edge; ++i) {
 				Edge edge = getNode(L[i - 1]).getEdgeBetween(getNode(L[i]));
-				pathsSon.add(edge);
+				path.add(edge);
 			}
+			paths.add(path);
 		} else {
 			for (int i = 0; i < getNodeCount(); ++i) {
 				if (arr[L[number_edge - 1]][i] != 0 && D[i] == 0) {
@@ -107,7 +108,6 @@ public class IntegratedGraph extends SingleGraph {
 				}
 			}
 		}
-		paths.add(pathsSon);
 	}
 
 	public void toImage(String name) {
