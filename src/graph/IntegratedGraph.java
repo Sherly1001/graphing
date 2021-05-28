@@ -129,26 +129,25 @@ public class IntegratedGraph extends SingleGraph {
 		}
 	}
 
-    public void exportImg(JPanel view) throws IOException {
+	public void exportImg(JPanel view) throws IOException {
 
-        final JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+		final JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
-        int result = fileChooser.showSaveDialog(fileChooser);
-        System.out.println(fileChooser.getSelectedFile().getName());
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            BufferedImage image = new BufferedImage(view.getSize().width,view.getSize().height,
-                    BufferedImage.TYPE_INT_RGB);
-            Graphics2D g2 = image.createGraphics();
-            view.paint(g2);
-            try {
-                ImageIO.write(image, "png", new File(selectedFile.getAbsolutePath() + ".png"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
+		int result = fileChooser.showSaveDialog(fileChooser);
+		if (result == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = fileChooser.getSelectedFile();
+			BufferedImage image = new BufferedImage(view.getSize().width, view.getSize().height,
+					BufferedImage.TYPE_INT_RGB);
+			Graphics2D g2 = image.createGraphics();
+			view.paint(g2);
+			try {
+				ImageIO.write(image, "png", new File(selectedFile.getAbsolutePath() + ".png"));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 }

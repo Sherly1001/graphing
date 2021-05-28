@@ -38,16 +38,6 @@ public class Main extends JFrame {
 		graph.setAttribute("ui.antialias");
 		graph.setAttribute("ui.stylesheet", "url('file://bin/gui/graph.css')");
 
-		LogEvent.addLogListener(new LogListener() {
-			@Override
-			public void run(LogEvent e) {
-				// TODO Auto-generated method stub
-				if (e.cause == LogEvent.Cause.INFO) {
-					System.out.println("INFO: " + e.message);
-				}
-			}
-		});
-
 		Viewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
 		viewer.enableAutoLayout();
 
@@ -93,11 +83,22 @@ public class Main extends JFrame {
 		setSize(860, 640);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		try {
-			graph.exportImg(view);
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
+
+		LogEvent.addLogListener(new LogListener() {
+			@Override
+			public void run(LogEvent e) {
+				// TODO Auto-generated method stub
+				if (e.cause == LogEvent.Cause.INFO) {
+					System.out.println("INFO: " + e.message);
+				} else if (e.cause == LogEvent.Cause.EXPORT_IMAGE) {
+					try {
+						graph.exportImg(view);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
 	}
 }
