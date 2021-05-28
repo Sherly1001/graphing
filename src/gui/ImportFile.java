@@ -3,7 +3,7 @@ package gui;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class importFile {
+public class ImportFile {
 	public static String getUrl() {
 		String url = null;
 		JFileChooser chooser = new JFileChooser();
