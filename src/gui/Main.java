@@ -138,31 +138,49 @@ public class Main extends JFrame {
 		panel2.add(startLabel);
 		panel2.add(stopLabel);
 		
-		String nodes[] = {"1","2","3","4","5"};  
-	    JComboBox cb1 = new JComboBox(nodes);
-	    cb1.setBounds(80, 40, 150, 25);
-	    panel2.add(cb1);
-	    JComboBox cb2 = new JComboBox(nodes);
-	    cb2.setBounds(80, 80, 150, 25);
-	    panel2.add(cb2);
+	    JTextField tf1= new JTextField();
+	    tf1.setBounds(80, 40, 150, 25);
+	    panel2.add(tf1);
+	    JTextField tf2 = new JTextField();
+	    tf2.setBounds(80, 80, 150, 25);
+	    panel2.add(tf2);
 	    JButton runButton = new JButton("Run");
-	    JButton stopButton = new JButton("Stop");
-		
+	    
 		try {
 			Image start = ImageIO.read(new File("images\\start.png"))
 					.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
 			runButton.setIcon(new ImageIcon(start));
-			Image stop = ImageIO.read(new File("images\\stop.png"))
-					.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
-			stopButton.setIcon(new ImageIcon(stop));
 		} catch (Exception e) {
 		}
 		 
-		runButton.setBounds(20, 120, 100, 35);
+		runButton.setBounds(30, 120, 190, 35);
 		panel2.add(runButton);
 		
-		stopButton.setBounds(130, 120, 100, 35);
-		panel2.add(stopButton);
+		JLabel selectLabel = new JLabel("Select node:");
+		selectLabel.setBounds(10, 170, 100, 25);
+		panel2.add(selectLabel);
+		String nodes[] = {"1","2","3","4","5"};  
+		JComboBox cb = new JComboBox(nodes);
+		cb.setBounds(90, 170, 140, 25);
+		panel2.add(cb);
+		    
+		JButton nextButton = new JButton("Next");
+		JButton backButton = new JButton("Back");
+	    
+		try {
+			Image next = ImageIO.read(new File("images\\next.png"))
+					.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			nextButton.setIcon(new ImageIcon(next));
+			Image back = ImageIO.read(new File("images\\back.png"))
+					.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			backButton.setIcon(new ImageIcon(back));
+		} catch (Exception e) {
+		}
+		 
+		nextButton.setBounds(20, 220, 100, 35);
+		panel2.add(nextButton);
+		backButton.setBounds(140, 220, 100, 35);
+		panel2.add(backButton);
 		
 		logPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "logs"));
 
