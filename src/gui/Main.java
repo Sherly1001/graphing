@@ -3,6 +3,7 @@ package gui;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -69,44 +70,34 @@ public class Main extends JFrame {
 	    final JTextArea planetDescription = new JTextArea();
 	      
 	    JMenu fileMenu = new JMenu("File");
-	    JMenu editMenu = new JMenu("Edit"); 
-	    JMenu aboutMenu = new JMenu("About");
-	    JMenu linkMenu = new JMenu("Links");
 	    fileMenu.setBounds(0, 0, 100, 20);
-		//tao cac item
-        JMenuItem newMenuItem = new JMenuItem("New");
-        newMenuItem.setMnemonic(KeyEvent.VK_N);
-        newMenuItem.setActionCommand("New");
 
         JMenuItem openMenuItem = new JMenuItem("Open");
         openMenuItem.setActionCommand("Open");
 
-        JMenuItem saveMenuItem = new JMenuItem("Save");
-        saveMenuItem.setActionCommand("Save");
+        JMenuItem exportMenuItem = new JMenuItem("Export");
+        exportMenuItem.setActionCommand("Export");
 
         JMenuItem exitMenuItem = new JMenuItem("Exit");
         exitMenuItem.setActionCommand("Exit");
 
-      	JMenuItem cutMenuItem = new JMenuItem("Cut");
-      	cutMenuItem.setActionCommand("Cut");
-
-      	JMenuItem copyMenuItem = new JMenuItem("Copy");
-      	copyMenuItem.setActionCommand("Copy");
-      
-      	JMenuItem pasteMenuItem = new JMenuItem("Paste");
-      	pasteMenuItem.setActionCommand("Paste");
-      	fileMenu.add(newMenuItem);
+      	try {
+			Image file = ImageIO.read(new File("C:\\Users\\admin\\git\\graphing\\images\\file.png"))
+					.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			openMenuItem.setIcon(new ImageIcon(file));
+			Image export = ImageIO.read(new File("C:\\Users\\admin\\git\\graphing\\images\\export.png"))
+					.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			exportMenuItem.setIcon(new ImageIcon(export));
+			Image exit = ImageIO.read(new File("C:\\Users\\admin\\git\\graphing\\images\\exit.png"))
+					.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			exitMenuItem.setIcon(new ImageIcon(exit));
+		} catch (Exception e) {
+		}
       	fileMenu.add(openMenuItem);
-      	fileMenu.add(saveMenuItem);
+      	fileMenu.add(exportMenuItem);
       	fileMenu.addSeparator();
       	fileMenu.add(exitMenuItem);  
-      	editMenu.add(cutMenuItem);
-      	editMenu.add(copyMenuItem);
-      	editMenu.add(pasteMenuItem);
       	menuBar.add(fileMenu);
-      	menuBar.add(editMenu);
-      	menuBar.add(aboutMenu);       
-      	menuBar.add(linkMenu);
       	setJMenuBar(menuBar);
       	
       	panel1.setLayout(new GridBagLayout());
@@ -139,25 +130,38 @@ public class Main extends JFrame {
 		panel2.setBackground(Color.white);
 	    
 		panel2.setLayout(null);
+		
+		JLabel startLabel = new JLabel("Start node:");
+		JLabel stopLabel = new JLabel("Stop node:");
+		startLabel.setBounds(10, 40, 150, 25);
+		stopLabel.setBounds(10, 80, 150, 25);
+		panel2.add(startLabel);
+		panel2.add(stopLabel);
+		
 		String nodes[] = {"1","2","3","4","5"};  
 	    JComboBox cb1 = new JComboBox(nodes);
-	    cb1.setBounds(50, 40, 150, 25);
+	    cb1.setBounds(80, 40, 150, 25);
 	    panel2.add(cb1);
 	    JComboBox cb2 = new JComboBox(nodes);
-	    cb2.setBounds(50, 80, 150, 25);
+	    cb2.setBounds(80, 80, 150, 25);
 	    panel2.add(cb2);
-	    JButton runButton = new JButton();
-	    runButton.setText("Run");
-	    try{
-	    	Image image = ImageIO.read(new File("C:\\Users\\admin\\git\\graphing\\src\\gui\\images.jpg")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
-	    	runButton.setIcon(new ImageIcon(image));
-	    } 
-	    catch (Exception e) {
-	    }		
-		runButton.setBounds(40, 120, 80, 35);
+	    JButton runButton = new JButton("Run");
+	    JButton stopButton = new JButton("Stop");
+		
+		try {
+			Image start = ImageIO.read(new File("C:\\Users\\admin\\git\\graphing\\images\\start.png"))
+					.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			runButton.setIcon(new ImageIcon(start));
+			Image stop = ImageIO.read(new File("C:\\Users\\admin\\git\\graphing\\images\\stop.png"))
+					.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			stopButton.setIcon(new ImageIcon(stop));
+		} catch (Exception e) {
+		}
+		 
+		runButton.setBounds(20, 120, 100, 35);
 		panel2.add(runButton);
-		JButton stopButton = new JButton("Stop");
-		stopButton.setBounds(150, 120, 80, 35);
+		
+		stopButton.setBounds(130, 120, 100, 35);
 		panel2.add(stopButton);
 		
 		logPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "logs"));
