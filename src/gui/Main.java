@@ -139,26 +139,26 @@ public class Main extends JFrame {
 		panel2.setBackground(Color.white);
 	    
 		panel2.setLayout(null);
-		String nodes[]={"1","2","3","4","5"};  
+		String nodes[] = {"1","2","3","4","5"};  
 	    JComboBox cb1 = new JComboBox(nodes);
 	    cb1.setBounds(50, 40, 150, 25);
 	    panel2.add(cb1);
 	    JComboBox cb2 = new JComboBox(nodes);
 	    cb2.setBounds(50, 80, 150, 25);
 	    panel2.add(cb2);
-	    JButton loginButton = new JButton();
-	    loginButton.setText("Run");
+	    JButton runButton = new JButton();
+	    runButton.setText("Run");
 	    try{
 	    	Image image = ImageIO.read(new File("C:\\Users\\admin\\git\\graphing\\src\\gui\\images.jpg")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
-	    	loginButton.setIcon(new ImageIcon(image));
+	    	runButton.setIcon(new ImageIcon(image));
 	    } 
 	    catch (Exception e) {
 	    }		
-		loginButton.setBounds(40, 120, 80, 35);
-		panel2.add(loginButton);
-		JButton clearButton = new JButton("Stop");
-		clearButton.setBounds(150, 120, 80, 35);
-		panel2.add(clearButton);
+		runButton.setBounds(40, 120, 80, 35);
+		panel2.add(runButton);
+		JButton stopButton = new JButton("Stop");
+		stopButton.setBounds(150, 120, 80, 35);
+		panel2.add(stopButton);
 		
 		logPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "logs"));
 
