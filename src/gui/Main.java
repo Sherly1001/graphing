@@ -48,7 +48,7 @@ public class Main extends JFrame {
 
 		try {
 			graph.loadFromFile(ImportFile.getUrl());
-			graph.findAllPath("2", "12");
+//			graph.findAllPath("2", "12");
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -97,7 +97,6 @@ public class Main extends JFrame {
 		});
 
 		logPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "logs"));
-
 		gbc.gridy = 1;
 		gbc.gridwidth = 2;
 		gbc.weighty = 30;
@@ -119,8 +118,11 @@ public class Main extends JFrame {
 						graph.exportImg(view);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						System.out.println("Export image error " + e1.getMessage());
 					}
+				} else if (e.cause == LogEvent.Cause.FIND_PATH) {
+					// graph.findAllPath("2","12");
+
 				}
 			}
 		});
