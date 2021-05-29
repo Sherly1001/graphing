@@ -82,13 +82,13 @@ public class Main extends JFrame {
         exitMenuItem.setActionCommand("Exit");
 
       	try {
-			Image file = ImageIO.read(new File("C:\\Users\\admin\\git\\graphing\\images\\file.png"))
+			Image file = ImageIO.read(new File("images\\file.png"))
 					.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
 			openMenuItem.setIcon(new ImageIcon(file));
-			Image export = ImageIO.read(new File("C:\\Users\\admin\\git\\graphing\\images\\export.png"))
+			Image export = ImageIO.read(new File("images\\export.png"))
 					.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
 			exportMenuItem.setIcon(new ImageIcon(export));
-			Image exit = ImageIO.read(new File("C:\\Users\\admin\\git\\graphing\\images\\exit.png"))
+			Image exit = ImageIO.read(new File("images\\exit.png"))
 					.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
 			exitMenuItem.setIcon(new ImageIcon(exit));
 		} catch (Exception e) {
@@ -149,10 +149,10 @@ public class Main extends JFrame {
 	    JButton stopButton = new JButton("Stop");
 		
 		try {
-			Image start = ImageIO.read(new File("C:\\Users\\admin\\git\\graphing\\images\\start.png"))
+			Image start = ImageIO.read(new File("images\\start.png"))
 					.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
 			runButton.setIcon(new ImageIcon(start));
-			Image stop = ImageIO.read(new File("C:\\Users\\admin\\git\\graphing\\images\\stop.png"))
+			Image stop = ImageIO.read(new File("images\\stop.png"))
 					.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
 			stopButton.setIcon(new ImageIcon(stop));
 		} catch (Exception e) {
