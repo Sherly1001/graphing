@@ -69,6 +69,7 @@ public class ControlPanel extends JPanel {
 				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.FIND_PATH));
 				try {
 					graph.findAllPath(from, to);
+					graph.choise_path(0, from, to, 1);
 				} catch (Exception notFoundPath) {
 					System.out.println(notFoundPath.getMessage());
 				}
