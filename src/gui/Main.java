@@ -39,6 +39,10 @@ public class Main extends JFrame {
 		System.setProperty("awt.useSystemAAFontSettings", "on");
 		System.setProperty("swing.aatext", "true");
 
+		graph.setAttribute("ui.quality");
+		graph.setAttribute("ui.antialias");
+		graph.setAttribute("ui.stylesheet", "url('file://bin/gui/graph.css')");
+
 		Viewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
 		viewer.enableAutoLayout();
 
@@ -159,6 +163,12 @@ public class Main extends JFrame {
 					} catch (IOException e1) {
 						System.out.println("Export image error " + e1.getMessage());
 					}
+				} else if (e.cause == LogEvent.Cause.NEXT_NODE) {
+					System.out.print(e.message);
+					int index = Integer.parseInt(e.message) - 1;
+					graph.choise_path(index, "2", "12", 1);
+				} else if (e.cause == LogEvent.Cause.PERIOUS_NODE) {
+					graph.choise_path(1, "2", "12", -1);
 				} else if (e.cause == LogEvent.Cause.OPEN_FILE) {
 					try {
 						graph.loadFromFile(ImportFile.getUrl());

@@ -49,13 +49,6 @@ public class ControlPanel extends JPanel {
 		add(tf2);
 		JButton runButton = new JButton("Find Path");
 
-		runButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.FIND_PATH, tf1.getText() + "|" + tf2.getText()));
-			}
-		});
-
 		try {
 			Image start = ImageIO.read(new File("images/start.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
 			runButton.setIcon(new ImageIcon(start));
@@ -68,14 +61,14 @@ public class ControlPanel extends JPanel {
 		JLabel selectLabel = new JLabel("Select node:");
 		selectLabel.setBounds(10, 170, 100, 25);
 		add(selectLabel);
-		String nodes[] = { "Select node next", "2", "3", "4", "5" };
+		String nodes[] = { "Select node next" };
+
 		JComboBox cb = new JComboBox(nodes);
 		cb.setBounds(90, 170, 140, 25);
 		add(cb);
 
 		JButton nextButton = new JButton("Next");
 		JButton backButton = new JButton("Back");
-
 		try {
 			Image next = ImageIO.read(new File("images/next.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
 			nextButton.setIcon(new ImageIcon(next));
@@ -88,6 +81,31 @@ public class ControlPanel extends JPanel {
 		add(backButton);
 		nextButton.setBounds(140, 220, 100, 35);
 		add(nextButton);
+
+		runButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.FIND_PATH, tf1.getText() + "|" + tf2.getText()));
+				int numPath = graph.findAllPath(tf1.getText(), tf2.getText()).size();
+				for (int i = 0; i < numPath; i++) {
+					cb.addItem(i + 1);
+				}
+			}
+		});
+
+		nextButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.NEXT_NODE, cb.getSelectedItem() + ""));
+			}
+		});
+		backButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.PERIOUS_NODE));
+			}
+		});
+
 	}
 
 }

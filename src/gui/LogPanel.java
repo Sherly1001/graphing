@@ -41,16 +41,20 @@ public class LogPanel extends JPanel {
 		LogEvent.addLogListener(new LogListener() {
 			@Override
 			public void run(LogEvent e) {
+				int num = 1;
 				if (e.cause == LogEvent.Cause.FIND_PATH) {
 					String[] inputs = e.message.split("\\|");
+					graph.getNode(inputs[0]).setAttribute("ui.class", "marked");
 					System.out.println("INFO: From " + inputs[0] + " to " + inputs[1]);
 					String text = "";
 					try {
 						for (List<Edge> path : graph.findAllPath(inputs[0], inputs[1])) {
+							text += "Path " + num + ": ";
 							for (Edge edge : path) {
 								text += edge + " ";
 							}
 							text += "\n";
+							num ++;
 						}
 						textLog.setText(text);
 					} catch (Exception notFoundPath) {
