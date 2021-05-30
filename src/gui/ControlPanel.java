@@ -75,7 +75,6 @@ public class ControlPanel extends JPanel {
 
 		JButton nextButton = new JButton("Next");
 		JButton backButton = new JButton("Back");
-		
 		try {
 			Image next = ImageIO.read(new File("images/next.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
 			nextButton.setIcon(new ImageIcon(next));

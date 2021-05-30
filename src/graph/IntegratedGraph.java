@@ -1,23 +1,16 @@
 package graph;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
+
+import java.io.*;
+import java.util.*;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File; // Import the File class
-import java.io.FileNotFoundException; // Import this class to handle errors
-import java.io.IOException;
-import java.util.Scanner; // Import the Scanner class to read text files
 
 import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
-
-import event.LogEvent;
 
 public class IntegratedGraph extends SingleGraph {
 
@@ -49,6 +42,12 @@ public class IntegratedGraph extends SingleGraph {
 	public void loadFromFile(String filePath) throws FileNotFoundException {
 		// TODO
 		File myObj = new File(filePath);
+
+		clear();
+		setAttribute("ui.quality");
+		setAttribute("ui.antialias");
+		setAttribute("ui.stylesheet", "url('file://bin/gui/graph.css')");
+
 		Scanner myReader = new Scanner(myObj);
 		while (myReader.hasNextLine()) {
 			String data = myReader.nextLine();
@@ -72,7 +71,6 @@ public class IntegratedGraph extends SingleGraph {
 			for (int j = 0; j < arr.length; j++) {
 				arr[i][j] = 0;
 			}
-
 		}
 		edges().forEach(s -> {
 			arr[s.getSourceNode().getIndex()][s.getTargetNode().getIndex()] = 1;
@@ -139,7 +137,6 @@ public class IntegratedGraph extends SingleGraph {
 	}
 
 	public void exportImg(JPanel view) throws IOException {
-
 		final JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
