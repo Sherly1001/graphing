@@ -34,7 +34,7 @@ public class ScheduledTasks extends TimerTask {
 				move[0] += 1;
 			} else {
 				this.cancel();
-				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, "Stopped"));
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, "Done"));
 			}
 		}
 		if ("Run path".equalsIgnoreCase(name)) {

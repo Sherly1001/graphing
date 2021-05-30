@@ -246,6 +246,7 @@ public class Main extends JFrame {
 					LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, "Running"));
 				} else if (e.cause == LogEvent.Cause.STOP) {
 					te1.cancel();
+					LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, "Stopped"));
 				}
 			}
 		});
