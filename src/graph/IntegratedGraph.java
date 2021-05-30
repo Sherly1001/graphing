@@ -45,6 +45,12 @@ public class IntegratedGraph extends SingleGraph {
 	public void loadFromFile(String filePath) throws FileNotFoundException {
 		// TODO
 		File myObj = new File(filePath);
+		
+		clear();
+		setAttribute("ui.quality");
+		setAttribute("ui.antialias");
+		setAttribute("ui.stylesheet", "url('file://bin/gui/graph.css')");
+		
 		Scanner myReader = new Scanner(myObj);
 		while (myReader.hasNextLine()) {
 			String data = myReader.nextLine();
