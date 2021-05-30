@@ -4,6 +4,7 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
+import java.util.Timer;
 
 import javax.imageio.ImageIO;
 
@@ -237,8 +238,13 @@ public class Main extends JFrame {
 							currentEdge.getTargetNode().removeAttribute("ui.class");
 						}
 					}
+				} else if (e.cause == LogEvent.Cause.RUN) {
+					ScheduledTasks te1 = new ScheduledTasks("Run path", selectedRoute, move);
+					Timer t = new Timer();
+					t.scheduleAtFixedRate(te1, 0, 1000);
 				}
 			}
 		});
+
 	}
 }
