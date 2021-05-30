@@ -1,17 +1,10 @@
 package gui;
 
+import java.io.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import java.awt.event.*;
 
 import javax.imageio.ImageIO;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.io.IOException;
 
 import javax.swing.*;
 import org.graphstream.graph.*;
@@ -21,8 +14,7 @@ import org.graphstream.ui.swing_viewer.*;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.camera.Camera;
 
-import event.LogEvent;
-import event.LogListener;
+import event.*;
 import graph.IntegratedGraph;
 
 public class Main extends JFrame {
@@ -69,7 +61,6 @@ public class Main extends JFrame {
 		JMenuItem openMenuItem = new JMenuItem("Open");
 		openMenuItem.setActionCommand("Open");
 		openMenuItem.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
