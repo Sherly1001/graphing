@@ -1,20 +1,13 @@
 package gui;
 
-import java.awt.Image;
-import java.awt.LayoutManager;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.*;
+import java.awt.*;
+import java.awt.event.*;
 
+import javax.swing.*;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
-import event.LogEvent;
+import event.*;
 import graph.IntegratedGraph;
 
 public class ControlPanel extends JPanel {

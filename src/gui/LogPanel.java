@@ -1,18 +1,13 @@
 package gui;
 
 import java.awt.*;
-import java.awt.LayoutManager;
-import java.io.IOException;
 import java.util.List;
 
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.*;
 
-import org.graphstream.graph.Edge;
+import org.graphstream.graph.*;
 
-import event.LogEvent;
-import event.LogListener;
+import event.*;
 import graph.IntegratedGraph;
 
 public class LogPanel extends JPanel {
