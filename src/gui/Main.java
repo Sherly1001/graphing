@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
@@ -51,12 +53,12 @@ public class Main extends JFrame {
 		Viewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
 		viewer.enableAutoLayout();
 
-		try {
-			graph.loadFromFile(ImportFile.getUrl());
-//			graph.findAllPath("2", "12");
-		} catch (Exception e) {
-			System.out.println(e);
-		}
+//		try {
+//			graph.loadFromFile(ImportFile.getUrl());
+////			graph.findAllPath("2", "12");
+//		} catch (Exception e) {
+//			System.out.println(e);
+//		}
 
 		for (Node n : graph) {
 			n.setAttribute("ui.label", n.getId());
@@ -72,12 +74,34 @@ public class Main extends JFrame {
 
         JMenuItem openMenuItem = new JMenuItem("Open");
         openMenuItem.setActionCommand("Open");
+        openMenuItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.OPEN_FILE));
+			}
+		});
 
         JMenuItem exportMenuItem = new JMenuItem("Export");
         exportMenuItem.setActionCommand("Export");
+        exportMenuItem.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		// TODO Auto-generated method stub
+        		LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.EXPORT_IMAGE));
+        	}        	
+        });
 
         JMenuItem exitMenuItem = new JMenuItem("Exit");
         exitMenuItem.setActionCommand("Exit");
+        
+        exitMenuItem.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		System.exit(0);
+        	}        	
+        });
 
       	try {
 			Image file = ImageIO.read(new File("images\\file.png"))
@@ -158,6 +182,23 @@ public class Main extends JFrame {
 	    panel2.add(tf2);
 	    JButton runButton = new JButton("Run");
 	    
+	    runButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				String from = tf1.getText();
+				String to = tf2.getText();
+				System.out.println("INFO: From " + from + " to " + to);
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.FIND_PATH));
+				try {
+					graph.findAllPath(from, to);
+				} catch (Exception notFoundPath) {
+					System.out.println(notFoundPath.getMessage());
+				}
+			}
+		});
+	    
 		try {
 			Image start = ImageIO.read(new File("images\\start.png"))
 					.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
@@ -226,7 +267,16 @@ public class Main extends JFrame {
 						// TODO Auto-generated catch block
 						System.out.println("Export image error " + e1.getMessage());
 					}
-				} else if (e.cause == LogEvent.Cause.FIND_PATH) {
+				}
+				else if(e.cause == LogEvent.Cause.OPEN_FILE) {
+					try {
+						graph.loadFromFile(ImportFile.getUrl());
+//						graph.findAllPath("2", "12");
+					} catch (Exception e2) {
+						System.out.println(e2);
+					}
+				}
+				else if (e.cause == LogEvent.Cause.FIND_PATH) {
 					// graph.findAllPath("2","12");
 
 				}

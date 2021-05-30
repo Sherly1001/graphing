@@ -37,17 +37,6 @@ public class ControlPanel extends JPanel {
 
 	public ControlPanel(IntegratedGraph graph) {
 		this.graph = graph;
-		JButton button1 = new JButton("Export image");
-		button1.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.EXPORT_IMAGE));
-			}
-		});
-		add(button1);
-
 		JTextField fromNode = new JTextField(10);
 		JTextField toNode = new JTextField(10);
 
