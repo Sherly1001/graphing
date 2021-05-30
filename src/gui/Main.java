@@ -199,6 +199,9 @@ public class Main extends JFrame {
 					} catch (Exception e2) {
 						System.out.println(e2);
 					}
+					for (Node n : graph) {
+						n.setAttribute("ui.label", n.getId());
+					}
 				}
 			}
 		});
