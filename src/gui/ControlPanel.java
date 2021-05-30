@@ -120,6 +120,35 @@ public class ControlPanel extends JPanel {
 				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.PERIOUS_NODE));
 			}
 		});
+
+		JButton autoButton = new JButton("Run");
+
+		try {
+			Image start = ImageIO.read(new File("images/start.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			runButton.setIcon(new ImageIcon(start));
+		} catch (Exception e) {
+		}
+
+		autoButton.setBounds(30, 280, 80, 40);
+		add(autoButton);
+
+		autoButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.RUN));
+			}
+		});
+		
+		JButton stopButton = new JButton("Stop");
+		stopButton.setBounds(150, 280, 80, 40);
+		add(stopButton);
+
+		stopButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.STOP));
+			}
+		});
 	}
 
 }
