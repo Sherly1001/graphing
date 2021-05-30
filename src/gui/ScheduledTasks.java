@@ -25,6 +25,7 @@ public class ScheduledTasks extends TimerTask {
 	public void run() {
 		if (selectedRoute == null || selectedRoute.size() <= 0) {
 			LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.ERROR, "no route selected"));
+			this.cancel();
 		} else {
 			if (move < selectedRoute.size()) {
 				Edge currentEdge = selectedRoute.get(move);
