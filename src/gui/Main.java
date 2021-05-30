@@ -39,10 +39,6 @@ public class Main extends JFrame {
 		System.setProperty("awt.useSystemAAFontSettings", "on");
 		System.setProperty("swing.aatext", "true");
 
-		graph.setAttribute("ui.quality");
-		graph.setAttribute("ui.antialias");
-		graph.setAttribute("ui.stylesheet", "url('file://bin/gui/graph.css')");
-
 		Viewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
 		viewer.enableAutoLayout();
 
