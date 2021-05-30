@@ -29,7 +29,7 @@ public class Main extends JFrame {
 
 	private List<List<Edge>> paths;
 	private List<Edge> selectedRoute;
-	private int move[]= {0};
+	private int move[] = { 0 };
 	private ScheduledTasks te1;
 
 	public static void main(String[] args) {
@@ -256,9 +256,10 @@ public class Main extends JFrame {
 					te1 = new ScheduledTasks("Run path", selectedRoute, move);
 					Timer t = new Timer();
 					t.scheduleAtFixedRate(te1, 0, 1000);
-				}
-				else if (e.cause == LogEvent.Cause.STOP) {
+					LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, "Running"));
+				} else if (e.cause == LogEvent.Cause.STOP) {
 					te1.cancel();
+					LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, "Stopped"));
 				}
 			}
 		});
