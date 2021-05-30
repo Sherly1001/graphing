@@ -11,13 +11,18 @@ import javax.swing.*;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 
+import event.LogEvent;
+
 public class IntegratedGraph extends SingleGraph {
 
 	private int hasPath = 0;
 	private int start = 0;
 	private int end = 0;
-	private static int[] D;
-	private static int[] L;
+	private int has_start = 0;
+	private int has_end = 0;
+	private int move = 0;
+	private static int[] visited;
+	private static int[] load_path;
 
 	public IntegratedGraph(String id, boolean strictChecking, boolean autoCreate, int initialNodeCapacity,
 			int initialEdgeCapacity) {
@@ -61,6 +66,19 @@ public class IntegratedGraph extends SingleGraph {
 	public List<List<Edge>> findAllPath(String source, String destination) {
 		List<List<Edge>> paths = new ArrayList<List<Edge>>();
 		// TODO
+
+		Node sourceNode = getNode(source);
+		Node destinationNode = getNode(destination);
+
+		if (sourceNode == null) {
+			LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.ERROR, "Start node has not found!"));
+			return paths;
+		}
+		if (destinationNode == null) {
+			LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.ERROR, "End node has not found!"));
+			return paths;
+		}
+
 		int[][] arr = new int[getNodeCount()][getNodeCount()];
 		for (int i = 0; i < arr.length; i++) {
 			for (int j = 0; j < arr.length; j++) {
@@ -71,43 +89,38 @@ public class IntegratedGraph extends SingleGraph {
 			arr[s.getSourceNode().getIndex()][s.getTargetNode().getIndex()] = 1;
 		});
 
-		nodes().forEach(s -> {
-			if (s.getId().equals(source)) {
-				start = s.getIndex();
-			}
-			if (s.getId().equals(destination)) {
-				end = s.getIndex();
-			}
-		});
-		D = new int[getNodeCount()];
-		L = new int[getNodeCount()];
+		visited = new int[getNodeCount()];
+		load_path = new int[getNodeCount()];
 		for (int i = 0; i < getNodeCount(); i++) {
-			D[i] = 0;
-			L[i] = 0;
+			visited[i] = 0;
+			load_path[i] = 0;
 		}
-		D[start] = 1;
-		L[0] = start;
+		start = sourceNode.getIndex();
+		end = destinationNode.getIndex();
+		visited[start] = 1;
+		load_path[0] = start;
 		checkPath(1, end, arr, paths);
+
 		return paths;
 	}
 
 	public void checkPath(int number_edge, int end, int[][] arr, List<List<Edge>> paths) {
-		if (L[number_edge - 1] == end) {
+		if (load_path[number_edge - 1] == end) {
 			hasPath++;
 			List<Edge> path = new ArrayList<Edge>();
 			for (int i = 1; i < number_edge; ++i) {
-				Edge edge = getNode(L[i - 1]).getEdgeBetween(getNode(L[i]));
+				Edge edge = getNode(load_path[i - 1]).getEdgeBetween(getNode(load_path[i]));
 				path.add(edge);
 			}
 			paths.add(path);
 		} else {
 			for (int i = 0; i < getNodeCount(); ++i) {
-				if (arr[L[number_edge - 1]][i] != 0 && D[i] == 0) {
-					L[number_edge] = i;
-					D[i] = 1;
+				if (arr[load_path[number_edge - 1]][i] != 0 && visited[i] == 0) {
+					load_path[number_edge] = i;
+					visited[i] = 1;
 					checkPath(number_edge + 1, end, arr, paths);
-					L[number_edge] = 0;
-					D[i] = 0;
+					load_path[number_edge] = 0;
+					visited[i] = 0;
 				}
 			}
 		}
