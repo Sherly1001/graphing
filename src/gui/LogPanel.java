@@ -1,9 +1,13 @@
 package gui;
 
-import java.awt.LayoutManager;
+import java.awt.*;
+import java.util.List;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 
+import org.graphstream.graph.*;
+
+import event.*;
 import graph.IntegratedGraph;
 
 public class LogPanel extends JPanel {
@@ -31,5 +35,30 @@ public class LogPanel extends JPanel {
 
 	public LogPanel(IntegratedGraph graph) {
 		this.graph = graph;
+		JTextArea textLog = new JTextArea();
+		setLayout(new GridLayout(1, 1));
+		add(textLog);
+		LogEvent.addLogListener(new LogListener() {
+			@Override
+			public void run(LogEvent e) {
+				if (e.cause == LogEvent.Cause.FIND_PATH) {
+					String[] inputs = e.message.split("\\|");
+					graph.getNode(inputs[0]).setAttribute("ui.class", "marked");
+					System.out.println("INFO: From " + inputs[0] + " to " + inputs[1]);
+					String text = "";
+					try {
+						for (List<Edge> path : graph.findAllPath(inputs[0], inputs[1])) {
+							for (Edge edge : path) {
+								text += edge + " ";
+							}
+							text += "\n";
+						}
+						textLog.setText(text);
+					} catch (Exception notFoundPath) {
+						System.out.println(notFoundPath.getMessage());
+					}
+				}
+			}
+		});
 	}
 }

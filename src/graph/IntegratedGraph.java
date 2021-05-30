@@ -113,7 +113,7 @@ public class IntegratedGraph extends SingleGraph {
 //			}
 //		}
 		}
-		return paths;
+			return paths;
 	}
 
 	public void checkPath(int number_edge, int end, int[][] arr, List<List<Edge>> paths) {
@@ -171,17 +171,36 @@ public class IntegratedGraph extends SingleGraph {
 			System.out.println("Path invalid");
 		} else {
 			path = pathList.get(index);
-			move += choise;
-			if (move > path.size() || move < 0) {
+			if(choise == -1) {
+				move = move;
+			}
+			else {
+				move += choise;				
+			}
+			if (move > path.size()) {
 				System.out.println("You shall not pass");
-				move--;
+					move --;
 			} else {
-				for (int i = 0; i < move; i++) {
-					System.out.println(path.get(i).getId());
+				if (choise == 1) {
+					for (int i = 0; i < move; i++) {
+						System.out.println(path.get(i).getNode0());
+						path.get(i).getNode0().setAttribute("ui.class", "marked");
+						path.get(i).setAttribute("ui.class", "red");
+						path.get(i).getNode1().setAttribute("ui.class", "marked");
+					}
+				}
+				else {
+					for (int i = 0; i < move ; i++) {
+						path.get(i).removeAttribute("ui.class");							
+						if(i != 0) {
+							path.get(i).getNode0().removeAttribute("ui.class");
+						}
+						path.get(i).getNode1().removeAttribute("ui.class");
+					}
+					move = 0;
 				}
 			}
 
 		}
 	}
-
 }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class LogEvent {
 	public enum Cause {
-		INFO, ERROR, LOAD_FILE, EXPORT_IMAGE, FIND_PATH
+		INFO, ERROR, LOAD_FILE, EXPORT_IMAGE, FIND_PATH, OPEN_FILE, NEXT_NODE, PERIOUS_NODE
 	}
 
 	private static final List<LogListener> listeners = new ArrayList<>();
