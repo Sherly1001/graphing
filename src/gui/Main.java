@@ -1,6 +1,14 @@
 package gui;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import javax.imageio.ImageIO;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.IOException;
@@ -44,7 +52,7 @@ public class Main extends JFrame {
 
 		try {
 			graph.loadFromFile(ImportFile.getUrl());
-//			graph.findAllPath("2", "12");
+			graph.findAllPath("2", "12");
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -53,25 +61,72 @@ public class Main extends JFrame {
 			n.setAttribute("ui.label", n.getId());
 		}
 
-		ctn.setLayout(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
+		JMenuBar menuBar = new JMenuBar();
 
-		controlPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "controler"));
+		JMenu fileMenu = new JMenu("File");
+		fileMenu.setBounds(0, 0, 100, 20);
 
-		gbc.gridx = 1;
-		gbc.gridy = 0;
-		gbc.gridwidth = gbc.gridheight = 1;
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.anchor = GridBagConstraints.NORTHWEST;
-		gbc.weightx = 30;
-		gbc.weighty = 70;
-		ctn.add(controlPanel, gbc);
+		JMenuItem openMenuItem = new JMenuItem("Open");
+		openMenuItem.setActionCommand("Open");
+		openMenuItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.OPEN_FILE));
+			}
+		});
+
+		JMenuItem exportMenuItem = new JMenuItem("Export");
+		exportMenuItem.setActionCommand("Export");
+		exportMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.EXPORT_IMAGE));
+			}
+		});
+
+		JMenuItem exitMenuItem = new JMenuItem("Exit");
+		exitMenuItem.setActionCommand("Exit");
+
+		exitMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+
+		try {
+			Image file = ImageIO.read(new File("images/file.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			openMenuItem.setIcon(new ImageIcon(file));
+			Image export = ImageIO.read(new File("images/export.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			exportMenuItem.setIcon(new ImageIcon(export));
+			Image exit = ImageIO.read(new File("images/exit.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			exitMenuItem.setIcon(new ImageIcon(exit));
+		} catch (Exception e) {
+		}
+		fileMenu.add(openMenuItem);
+		fileMenu.add(exportMenuItem);
+		fileMenu.addSeparator();
+		fileMenu.add(exitMenuItem);
+		menuBar.add(fileMenu);
+		setJMenuBar(menuBar);
+
+		controlPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		controlPanel.setPreferredSize(new Dimension(250, 400));
+		controlPanel.setMaximumSize(new Dimension(400, 600));
+		controlPanel.setMinimumSize(new Dimension(250, 400));
+		controlPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Controller"));
+		controlPanel.setBackground(Color.white);
+		controlPanel.setLayout(null);
 
 		ViewPanel view = (ViewPanel) viewer.addDefaultView(false);
-		view.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "graph"));
-		gbc.gridx = 0;
-		gbc.weightx = 70;
-		ctn.add(view, gbc);
+		view.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Graph"));
+		view.setAlignmentX(Component.LEFT_ALIGNMENT);
+		view.setPreferredSize(new Dimension(600, 400));
+		view.setMaximumSize(new Dimension(1000, 600));
+		view.setMinimumSize(new Dimension(500, 300));
 
 		view.getCamera().setViewPercent(1);
 		view.addMouseWheelListener(new MouseWheelListener() {
@@ -92,33 +147,42 @@ public class Main extends JFrame {
 			}
 		});
 
-		logPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "logs"));
-		gbc.gridy = 1;
-		gbc.gridwidth = 2;
-		gbc.weighty = 30;
-		ctn.add(logPanel, gbc);
+		logPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Logs"));
+		logPanel.setBackground(Color.white);
 
+		JSplitPane innerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, view, controlPanel);
+		innerPane.setContinuousLayout(true);
+		innerPane.setOneTouchExpandable(true);
+		JSplitPane outerPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, innerPane, logPanel);
+		outerPane.setContinuousLayout(true);
+		outerPane.setOneTouchExpandable(true);
+
+		ctn.add(outerPane, BorderLayout.CENTER);
 		setVisible(true);
-		setSize(860, 640);
+		setSize(900, 640);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		LogEvent.addLogListener(new LogListener() {
 			@Override
 			public void run(LogEvent e) {
-				// TODO Auto-generated method stub
 				if (e.cause == LogEvent.Cause.INFO) {
 					System.out.println("INFO: " + e.message);
 				} else if (e.cause == LogEvent.Cause.EXPORT_IMAGE) {
 					try {
 						graph.exportImg(view);
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
 						System.out.println("Export image error " + e1.getMessage());
 					}
-				} else if (e.cause == LogEvent.Cause.FIND_PATH) {
-					// graph.findAllPath("2","12");
-
+				} else if (e.cause == LogEvent.Cause.OPEN_FILE) {
+					try {
+						graph.loadFromFile(ImportFile.getUrl());
+					} catch (Exception e2) {
+						System.out.println(e2);
+					}
+					for (Node n : graph) {
+						n.setAttribute("ui.label", n.getId());
+					}
 				}
 			}
 		});
