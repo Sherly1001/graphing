@@ -29,7 +29,7 @@ public class Main extends JFrame {
 
 	private List<List<Edge>> paths;
 	private List<Edge> selectedRoute;
-	private int move;
+	private int move[]= {0};
 	private ScheduledTasks te1;
 
 	public static void main(String[] args) {
@@ -188,7 +188,7 @@ public class Main extends JFrame {
 					graph.edges().forEach(edge -> edge.removeAttribute("ui.class"));
 					if (paths != null && paths.size() > 0) {
 						selectedRoute = paths.get(0);
-						move = 0;
+						move[0] = 0;
 						paths.get(0).get(0).getSourceNode().setAttribute("ui.class", "marked");
 
 						String stringRoute = "";
@@ -201,7 +201,7 @@ public class Main extends JFrame {
 				} else if (e.cause == LogEvent.Cause.SELECT_ROUTE) {
 					if (paths != null && paths.size() > 0) {
 						selectedRoute = paths.get(Integer.parseInt(e.message.replace("route ", "")) - 1);
-						move = 0;
+						move[0] = 0;
 						graph.nodes().forEach(node -> node.removeAttribute("ui.class"));
 						graph.edges().forEach(edge -> edge.removeAttribute("ui.class"));
 						selectedRoute.get(0).getSourceNode().setAttribute("ui.class", "marked");
@@ -217,11 +217,11 @@ public class Main extends JFrame {
 					if (selectedRoute == null || selectedRoute.size() <= 0) {
 						LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.ERROR, "no route selected"));
 					} else {
-						if (move < selectedRoute.size()) {
-							Edge currentEdge = selectedRoute.get(move);
+						if (move[0] < selectedRoute.size()) {
+							Edge currentEdge = selectedRoute.get(move[0]);
 							currentEdge.setAttribute("ui.class", "red");
 							currentEdge.getTargetNode().setAttribute("ui.class", "marked");
-							move += 1;
+							move[0] += 1;
 						} else {
 							LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.ERROR, "no next node"));
 						}
@@ -230,11 +230,11 @@ public class Main extends JFrame {
 					if (selectedRoute == null || selectedRoute.size() <= 0) {
 						LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.ERROR, "no route selected"));
 					} else {
-						if (move == 0) {
+						if (move[0] == 0) {
 							LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.ERROR, "no previous node"));
 						} else {
-							move -= 1;
-							Edge currentEdge = selectedRoute.get(move);
+							move[0] -= 1;
+							Edge currentEdge = selectedRoute.get(move[0]);
 							currentEdge.removeAttribute("ui.class");
 							currentEdge.getTargetNode().removeAttribute("ui.class");
 						}

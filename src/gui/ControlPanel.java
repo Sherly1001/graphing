@@ -122,7 +122,7 @@ public class ControlPanel extends JPanel {
 			}
 		});
 
-		JButton dungButton = new JButton("Run");
+		JButton autoButton = new JButton("Run");
 
 		try {
 			Image start = ImageIO.read(new File("images/start.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
@@ -130,10 +130,10 @@ public class ControlPanel extends JPanel {
 		} catch (Exception e) {
 		}
 
-		dungButton.setBounds(30, 280, 80, 40);
-		add(dungButton);
+		autoButton.setBounds(30, 280, 80, 40);
+		add(autoButton);
 
-		dungButton.addActionListener(new ActionListener() {
+		autoButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.RUN));

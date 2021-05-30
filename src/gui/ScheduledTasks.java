@@ -13,9 +13,9 @@ public class ScheduledTasks extends TimerTask {
 
 	private String name;
 	private List<Edge> selectedRoute;
-	private int move;
+	private int move[];
 
-	public ScheduledTasks(String n, List<Edge> selectedRoute, int move) {
+	public ScheduledTasks(String n, List<Edge> selectedRoute, int move[]) {
 		this.name = n;
 		this.selectedRoute = selectedRoute;
 		this.move = move;
@@ -27,11 +27,11 @@ public class ScheduledTasks extends TimerTask {
 			LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.ERROR, "no route selected"));
 			this.cancel();
 		} else {
-			if (move < selectedRoute.size()) {
-				Edge currentEdge = selectedRoute.get(move);
+			if (move[0] < selectedRoute.size()) {
+				Edge currentEdge = selectedRoute.get(move[0]);
 				currentEdge.setAttribute("ui.class", "red");
 				currentEdge.getTargetNode().setAttribute("ui.class", "marked");
-				move += 1;
+				move[0] += 1;
 			} else {
 				this.cancel();
 			}
