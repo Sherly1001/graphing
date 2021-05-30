@@ -184,6 +184,19 @@ public class Main extends JFrame {
 					paths = e.paths;
 					graph.nodes().forEach(node -> node.removeAttribute("ui.class"));
 					graph.edges().forEach(edge -> edge.removeAttribute("ui.class"));
+
+					LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, "Found " + paths.size() + " route(s)."));
+					int num = 0;
+					for (List<Edge> route : paths) {
+						num += 1;
+						String stringRoute = "";
+						for (Edge edge : route) {
+							stringRoute += edge.getSourceNode() + "->" + edge.getTargetNode() + ", ";
+						}
+						LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO,
+								"route " + num + ": " + stringRoute.replaceAll(", $", "")));
+					}
+
 					if (paths != null && paths.size() > 0) {
 						selectedRoute = paths.get(0);
 						move = 0;

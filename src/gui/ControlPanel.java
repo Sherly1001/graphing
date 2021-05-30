@@ -93,7 +93,6 @@ public class ControlPanel extends JPanel {
 				for (int i = 0; i < paths.size(); ++i) {
 					cb.addItem("route " + (i + 1));
 				}
-				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, "Found " + paths.size() + " route(s)."));
 				LogEvent.emitLogEvent(
 						new LogEvent(LogEvent.Cause.FIND_PATH, tf1.getText() + "|" + tf2.getText(), paths));
 			}
