@@ -158,10 +158,10 @@ public class ControlPanel extends JPanel {
 		nextNode.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!previousNode.equals(cb1.getSelectedItem().toString())) {
-				graph.getNode(previousNode).getEdgeToward(graph.getNode(cb1.getSelectedItem().toString()))
-						.setAttribute("ui.class", "red");
-				previousNode = cb1.getSelectedItem().toString();
+				if (!previousNode.equals(cb1.getSelectedItem().toString())) {
+					graph.getNode(previousNode).getEdgeToward(graph.getNode(cb1.getSelectedItem().toString()))
+							.setAttribute("ui.class", "red");
+					previousNode = cb1.getSelectedItem().toString();
 					graph.getNode(cb1.getSelectedItem().toString()).setAttribute("ui.class", "marked");
 				}
 				if (!cb1.getSelectedItem().toString().equals(tf2.getText())) {

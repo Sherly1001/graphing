@@ -250,10 +250,7 @@ public class Main extends JFrame {
 							currentEdge.removeAttribute("ui.class");
 							currentEdge.getTargetNode().removeAttribute("ui.class");
 						}
-
 					}
-				} else if (e.cause == LogEvent.Cause.NEXT_NODE_) {
-					
 				}
 			}
 		});
