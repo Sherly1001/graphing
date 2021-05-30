@@ -4,6 +4,9 @@ import java.awt.*;
 import java.util.List;
 
 import javax.swing.*;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 import org.graphstream.graph.*;
 
@@ -35,30 +38,31 @@ public class LogPanel extends JPanel {
 
 	public LogPanel(IntegratedGraph graph) {
 		this.graph = graph;
-		JTextArea textLog = new JTextArea();
+		JTextPane textPane = new JTextPane();
+		StyledDocument doc = textPane.getStyledDocument();
+		JScrollPane scrollPane = new JScrollPane(textPane);
+		scrollPane.setBorder(null);
+		// scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
+
+		SimpleAttributeSet error = new SimpleAttributeSet();
+		StyleConstants.setForeground(error, Color.RED);
+
 		setLayout(new GridLayout(1, 1));
-		add(textLog);
+		add(scrollPane);
 		LogEvent.addLogListener(new LogListener() {
 			@Override
 			public void run(LogEvent e) {
-				int num = 1;
-				if (e.cause == LogEvent.Cause.FIND_PATH) {
-					String[] inputs = e.message.split("\\|");
-					graph.getNode(inputs[0]).setAttribute("ui.class", "marked");
-					System.out.println("INFO: From " + inputs[0] + " to " + inputs[1]);
-					String text = "";
+				if (e.cause == LogEvent.Cause.INFO) {
 					try {
-						for (List<Edge> path : graph.findAllPath(inputs[0], inputs[1])) {
-							text += "Path " + num + ": ";
-							for (Edge edge : path) {
-								text += edge + " ";
-							}
-							text += "\n";
-							num ++;
-						}
-						textLog.setText(text);
-					} catch (Exception notFoundPath) {
-						System.out.println(notFoundPath.getMessage());
+						doc.insertString(doc.getLength(), "INFO: " + e.message + "\n", null);
+					} catch (Exception exception) {
+						// TODO: handle exception
+					}
+				} else if (e.cause == LogEvent.Cause.ERROR) {
+					try {
+						doc.insertString(doc.getLength(), "ERROR: " + e.message + "\n", error);
+					} catch (Exception exception) {
+						// TODO: handle exception
 					}
 				}
 			}

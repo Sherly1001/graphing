@@ -1,14 +1,17 @@
 package gui;
 
 import java.io.*;
+import java.util.List;
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+
 import javax.imageio.ImageIO;
 
 import event.*;
 import graph.IntegratedGraph;
+import org.graphstream.graph.Edge;
 
 public class ControlPanel extends JPanel {
 	private IntegratedGraph graph;
@@ -34,6 +37,7 @@ public class ControlPanel extends JPanel {
 
 	public ControlPanel(IntegratedGraph graph) {
 		this.graph = graph;
+		List<List<Edge>> paths = null;
 		JLabel startLabel = new JLabel("Start node:");
 		JLabel stopLabel = new JLabel("Stop node:");
 		startLabel.setBounds(10, 40, 150, 25);
@@ -58,12 +62,10 @@ public class ControlPanel extends JPanel {
 		runButton.setBounds(30, 120, 190, 35);
 		add(runButton);
 
-		JLabel selectLabel = new JLabel("Select node:");
+		JLabel selectLabel = new JLabel("Select route:");
 		selectLabel.setBounds(10, 170, 100, 25);
 		add(selectLabel);
-		String nodes[] = { "Select node next" };
-
-		JComboBox cb = new JComboBox(nodes);
+		JComboBox cb = new JComboBox();
 		cb.setBounds(90, 170, 140, 25);
 		add(cb);
 
@@ -85,10 +87,23 @@ public class ControlPanel extends JPanel {
 		runButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.FIND_PATH, tf1.getText() + "|" + tf2.getText()));
-				int numPath = graph.findAllPath(tf1.getText(), tf2.getText()).size();
-				for (int i = 0; i < numPath; i++) {
-					cb.addItem(i + 1);
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, "Finding paths."));
+				List<List<Edge>> paths = graph.findAllPath(tf1.getText(), tf2.getText());
+				cb.removeAllItems();
+				for (int i = 0; i < paths.size(); ++i) {
+					cb.addItem("route " + (i + 1));
+				}
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, "Found " + paths.size() + " route(s)."));
+				LogEvent.emitLogEvent(
+						new LogEvent(LogEvent.Cause.FIND_PATH, tf1.getText() + "|" + tf2.getText(), paths));
+			}
+		});
+
+		cb.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.SELECT_ROUTE, e.getItem() + ""));
 				}
 			}
 		});
@@ -96,16 +111,16 @@ public class ControlPanel extends JPanel {
 		nextButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.NEXT_NODE, cb.getSelectedItem() + ""));
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.NEXT_NODE));
 			}
 		});
+
 		backButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.PERIOUS_NODE));
 			}
 		});
-
 	}
 
 }
