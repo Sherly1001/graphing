@@ -159,7 +159,7 @@ public class Main extends JFrame {
 		JLabel selectLabel = new JLabel("Select node:");
 		selectLabel.setBounds(10, 170, 100, 25);
 		panel2.add(selectLabel);
-		String nodes[] = {"1","2","3","4","5"};  
+		String nodes[] = {"Select node next","2","3","4","5"};  
 		JComboBox cb = new JComboBox(nodes);
 		cb.setBounds(90, 170, 140, 25);
 		panel2.add(cb);
