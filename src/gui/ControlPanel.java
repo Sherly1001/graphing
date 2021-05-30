@@ -1,6 +1,7 @@
 package gui;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.awt.*;
 import java.awt.event.*;
@@ -13,8 +14,12 @@ import event.*;
 import graph.IntegratedGraph;
 import org.graphstream.graph.Edge;
 
+import org.graphstream.graph.*;
+import org.graphstream.graph.implementations.*;
+
 public class ControlPanel extends JPanel {
 	private IntegratedGraph graph;
+	String previousNode;
 
 	public ControlPanel() {
 		// TODO Auto-generated constructor stub
@@ -66,6 +71,7 @@ public class ControlPanel extends JPanel {
 		selectLabel.setBounds(10, 170, 100, 25);
 		add(selectLabel);
 		JComboBox cb = new JComboBox();
+
 		cb.setBounds(90, 170, 140, 25);
 		add(cb);
 
@@ -84,14 +90,57 @@ public class ControlPanel extends JPanel {
 		nextButton.setBounds(140, 220, 100, 35);
 		add(nextButton);
 
+		nextButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.NEXT_NODE));
+			}
+		});
+
+		backButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.PERIOUS_NODE));
+			}
+		});
+
+		JLabel nodeNext = new JLabel("Select node:");
+		nodeNext.setBounds(10, 270, 150, 25);
+		add(nodeNext);
+
+		JComboBox cb1 = new JComboBox();
+
+		cb1.setBounds(90, 270, 140, 25);
+		add(cb1);
+
+		JButton nextNode = new JButton("Next node");
+
+		try {
+			Image next = ImageIO.read(new File("images/next.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			nextNode.setIcon(new ImageIcon(next));
+		} catch (Exception e) {
+		}
+
+		nextNode.setBounds(30, 315, 190, 35);
+		add(nextNode);
+
 		runButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				previousNode = tf1.getText();
+
 				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, "Finding paths."));
 				List<List<Edge>> paths = graph.findAllPath(tf1.getText(), tf2.getText());
 				cb.removeAllItems();
 				for (int i = 0; i < paths.size(); ++i) {
 					cb.addItem("route " + (i + 1));
+				}
+				cb1.removeAllItems();
+				ArrayList<String> nextNode = new ArrayList<String>();
+				for (List<Edge> path : paths) {
+					if (!nextNode.contains(path.get(0).getNode1().toString()))
+						cb1.addItem(path.get(0).getNode1().toString());
+					nextNode.add(path.get(0).getNode1().toString());
 				}
 				LogEvent.emitLogEvent(
 						new LogEvent(LogEvent.Cause.FIND_PATH, tf1.getText() + "|" + tf2.getText(), paths));
@@ -106,18 +155,25 @@ public class ControlPanel extends JPanel {
 				}
 			}
 		});
-
-		nextButton.addActionListener(new ActionListener() {
+		nextNode.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.NEXT_NODE));
-			}
-		});
-
-		backButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.PERIOUS_NODE));
+				if(!previousNode.equals(cb1.getSelectedItem().toString())) {
+				graph.getNode(previousNode).getEdgeToward(graph.getNode(cb1.getSelectedItem().toString()))
+						.setAttribute("ui.class", "red");
+				previousNode = cb1.getSelectedItem().toString();
+					graph.getNode(cb1.getSelectedItem().toString()).setAttribute("ui.class", "marked");
+				}
+				if (!cb1.getSelectedItem().toString().equals(tf2.getText())) {
+					List<List<Edge>> paths = graph.findAllPath(cb1.getSelectedItem().toString(), tf2.getText());
+					cb1.removeAllItems();
+					ArrayList<String> nextNode = new ArrayList<String>();
+					for (List<Edge> path : paths) {
+						if (!nextNode.contains(path.get(0).getNode1().toString()))
+							cb1.addItem(path.get(0).getNode1().toString());
+						nextNode.add(path.get(0).getNode1().toString());
+					}
+				}
 			}
 		});
 	}

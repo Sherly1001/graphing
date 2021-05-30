@@ -150,5 +150,23 @@ public class IntegratedGraph extends SingleGraph {
 		// TODO Auto-generated method stub
 
 	}
+	ArrayList<String> nextNode;
+	public static int check = 0;
+	public ArrayList<String> findNode(String source, String destination, String selection){
+		if(check >=1 ) {
+			source = selection;
+		}
+		if(destination == selection)
+			return null;
+		List<List<Edge>> listPath = findAllPath(source, destination);
+		nextNode = new ArrayList<String>();
+		for(List<Edge> path : listPath) {
+			if(!nextNode.contains(path.get(0).getNode1().toString()))
+				nextNode.add(path.get(0).getNode1().toString());
+		}
+		System.out.print(nextNode);
+		check++;
+		return nextNode;
+	}
 
 }

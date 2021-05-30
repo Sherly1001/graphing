@@ -1,6 +1,7 @@
 package gui;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
@@ -249,7 +250,10 @@ public class Main extends JFrame {
 							currentEdge.removeAttribute("ui.class");
 							currentEdge.getTargetNode().removeAttribute("ui.class");
 						}
+
 					}
+				} else if (e.cause == LogEvent.Cause.NEXT_NODE_) {
+					
 				}
 			}
 		});
