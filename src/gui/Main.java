@@ -30,6 +30,7 @@ public class Main extends JFrame {
 	private List<List<Edge>> paths;
 	private List<Edge> selectedRoute;
 	private int move;
+	private ScheduledTasks te1;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -239,9 +240,12 @@ public class Main extends JFrame {
 						}
 					}
 				} else if (e.cause == LogEvent.Cause.RUN) {
-					ScheduledTasks te1 = new ScheduledTasks("Run path", selectedRoute, move);
+					te1 = new ScheduledTasks("Run path", selectedRoute, move);
 					Timer t = new Timer();
 					t.scheduleAtFixedRate(te1, 0, 1000);
+				}
+				else if (e.cause == LogEvent.Cause.STOP) {
+					te1.cancel();
 				}
 			}
 		});

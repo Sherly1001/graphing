@@ -21,11 +21,6 @@ public class ScheduledTasks extends TimerTask {
 		this.move = move;
 	}
 
-//	@Override
-//	public void cancel() {
-//		this.cancel();
-//		System.out.println("End");
-//	}
 	@Override
 	public void run() {
 		if (selectedRoute == null || selectedRoute.size() <= 0) {

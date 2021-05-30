@@ -130,13 +130,24 @@ public class ControlPanel extends JPanel {
 		} catch (Exception e) {
 		}
 
-		dungButton.setBounds(90, 280, 80, 40);
+		dungButton.setBounds(30, 280, 80, 40);
 		add(dungButton);
 
 		dungButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.RUN));
+			}
+		});
+		
+		JButton stopButton = new JButton("Stop");
+		stopButton.setBounds(150, 280, 80, 40);
+		add(stopButton);
+
+		stopButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.STOP));
 			}
 		});
 	}
