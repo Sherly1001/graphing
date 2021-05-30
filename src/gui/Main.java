@@ -102,11 +102,11 @@ public class Main extends JFrame {
 		});
 
 		try {
-			Image file = ImageIO.read(new File("images\\file.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			Image file = ImageIO.read(new File("images/file.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
 			openMenuItem.setIcon(new ImageIcon(file));
-			Image export = ImageIO.read(new File("images\\export.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			Image export = ImageIO.read(new File("images/export.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
 			exportMenuItem.setIcon(new ImageIcon(export));
-			Image exit = ImageIO.read(new File("images\\exit.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			Image exit = ImageIO.read(new File("images/exit.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
 			exitMenuItem.setIcon(new ImageIcon(exit));
 		} catch (Exception e) {
 		}

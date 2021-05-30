@@ -64,7 +64,7 @@ public class ControlPanel extends JPanel {
 		});
 
 		try {
-			Image start = ImageIO.read(new File("images\\start.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			Image start = ImageIO.read(new File("images/start.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
 			runButton.setIcon(new ImageIcon(start));
 		} catch (Exception e) {
 		}
@@ -84,9 +84,9 @@ public class ControlPanel extends JPanel {
 		JButton backButton = new JButton("Back");
 
 		try {
-			Image next = ImageIO.read(new File("images\\next.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			Image next = ImageIO.read(new File("images/next.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
 			nextButton.setIcon(new ImageIcon(next));
-			Image back = ImageIO.read(new File("images\\back.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			Image back = ImageIO.read(new File("images/back.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
 			backButton.setIcon(new ImageIcon(back));
 		} catch (Exception e) {
 		}
