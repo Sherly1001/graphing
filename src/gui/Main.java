@@ -60,9 +60,7 @@ public class Main extends JFrame {
 //			System.out.println(e);
 //		}
 
-		for (Node n : graph) {
-			n.setAttribute("ui.label", n.getId());
-		}
+
 		
 		JMenuBar menuBar = new JMenuBar();
 	    final JPanel panel1 = new JPanel();
@@ -274,6 +272,9 @@ public class Main extends JFrame {
 //						graph.findAllPath("2", "12");
 					} catch (Exception e2) {
 						System.out.println(e2);
+					}
+					for (Node n : graph) {
+						n.setAttribute("ui.label", n.getId());
 					}
 				}
 				else if (e.cause == LogEvent.Cause.FIND_PATH) {
