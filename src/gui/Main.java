@@ -54,13 +54,6 @@ public class Main extends JFrame {
 		Viewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
 		viewer.enableAutoLayout();
 
-		try {
-			graph.loadFromFile(ImportFile.getUrl());
-			graph.findAllPath("2", "12");
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-
 		for (Node n : graph) {
 			n.setAttribute("ui.label", n.getId());
 		}
@@ -153,6 +146,7 @@ public class Main extends JFrame {
 
 		logPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Logs"));
 		logPanel.setBackground(Color.white);
+		logPanel.setMinimumSize(new Dimension(1000, 100));
 
 		JSplitPane innerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, view, controlPanel);
 		innerPane.setContinuousLayout(true);
