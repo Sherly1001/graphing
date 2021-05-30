@@ -109,7 +109,7 @@ public class IntegratedGraph extends SingleGraph {
 			hasPath++;
 			List<Edge> path = new ArrayList<Edge>();
 			for (int i = 1; i < number_edge; ++i) {
-				Edge edge = getNode(load_path[i - 1]).getEdgeBetween(getNode(load_path[i]));
+				Edge edge = getNode(load_path[i - 1]).getEdgeToward(getNode(load_path[i]));
 				path.add(edge);
 			}
 			paths.add(path);
