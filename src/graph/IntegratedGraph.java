@@ -90,11 +90,6 @@ public class IntegratedGraph extends SingleGraph {
 		D[start] = 1;
 		L[0] = start;
 		checkPath(1, end, arr, paths);
-		for (List<Edge> path: paths) {
-			for (Edge e: path) {
-				System.out.println(e);
-			}
-		}
 		return paths;
 	}
 

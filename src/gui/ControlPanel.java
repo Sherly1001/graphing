@@ -1,14 +1,18 @@
 package gui;
 
+import java.awt.Image;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 
 import event.LogEvent;
 import graph.IntegratedGraph;
@@ -37,33 +41,60 @@ public class ControlPanel extends JPanel {
 
 	public ControlPanel(IntegratedGraph graph) {
 		this.graph = graph;
-		JTextField fromNode = new JTextField(10);
-		JTextField toNode = new JTextField(10);
+		JLabel startLabel = new JLabel("Start node:");
+		JLabel stopLabel = new JLabel("Stop node:");
+		startLabel.setBounds(10, 40, 150, 25);
+		stopLabel.setBounds(10, 80, 150, 25);
+		add(startLabel);
+		add(stopLabel);
 
-		this.add(new JLabel("From Node :\n"));
-		this.add(fromNode);
+		JTextField tf1 = new JTextField();
+		JTextField tf2 = new JTextField();
+		tf1.setBounds(80, 40, 150, 25);
+		add(tf1);
+		tf2.setBounds(80, 80, 150, 25);
+		add(tf2);
+		JButton runButton = new JButton("Find Path");
 
-		this.add(new JLabel("To Node :\n"));
-		this.add(toNode);
-
-		JButton button2 = new JButton("Find path");
-		button2.addActionListener(new ActionListener() {
-
+		runButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				String from = fromNode.getText();
-				String to = toNode.getText();
-				System.out.println("INFO: From " + from + " to " + to);
-				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.FIND_PATH));
-				try {
-					graph.findAllPath(from, to);
-				} catch (Exception notFoundPath) {
-					System.out.println(notFoundPath.getMessage());
-				}
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.FIND_PATH, tf1.getText() + "|" + tf2.getText()));
 			}
 		});
-		add(button2);
+
+		try {
+			Image start = ImageIO.read(new File("images\\start.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			runButton.setIcon(new ImageIcon(start));
+		} catch (Exception e) {
+		}
+
+		runButton.setBounds(30, 120, 190, 35);
+		add(runButton);
+
+		JLabel selectLabel = new JLabel("Select node:");
+		selectLabel.setBounds(10, 170, 100, 25);
+		add(selectLabel);
+		String nodes[] = { "Select node next", "2", "3", "4", "5" };
+		JComboBox cb = new JComboBox(nodes);
+		cb.setBounds(90, 170, 140, 25);
+		add(cb);
+
+		JButton nextButton = new JButton("Next");
+		JButton backButton = new JButton("Back");
+
+		try {
+			Image next = ImageIO.read(new File("images\\next.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			nextButton.setIcon(new ImageIcon(next));
+			Image back = ImageIO.read(new File("images\\back.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			backButton.setIcon(new ImageIcon(back));
+		} catch (Exception e) {
+		}
+
+		backButton.setBounds(20, 220, 100, 35);
+		add(backButton);
+		nextButton.setBounds(140, 220, 100, 35);
+		add(nextButton);
 	}
 
 }
