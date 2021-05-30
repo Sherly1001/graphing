@@ -2,12 +2,16 @@ package graph;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.File; // Import the File class
 import java.io.FileNotFoundException; // Import this class to handle errors
-import java.lang.reflect.Array;
+import java.io.IOException;
 import java.util.Scanner; // Import the Scanner class to read text files
-import java.util.Stack;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
 
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
@@ -15,6 +19,7 @@ import org.graphstream.graph.implementations.*;
 import event.LogEvent;
 
 public class IntegratedGraph extends SingleGraph {
+
 	private int hasPath = 0;
 	private int start = 0;
 	private int end = 0;
@@ -65,22 +70,9 @@ public class IntegratedGraph extends SingleGraph {
 
 		}
 		edges().forEach(s -> {
-//			System.out.print(s.getSourceNode().getId());
-			// System.out.print(" "+s.getTargetNode() + " ");
-//			String getedge = s.getId();
-			// arr[Integer.parseInt(s.getSourceNode().getId())][Integer.parseInt(s.getTargetNode().getId())]
-			// = 1;
 			arr[s.getSourceNode().getIndex()][s.getTargetNode().getIndex()] = 1;
 		});
 
-//		for (int i = 0; i < arr.length; i++) {
-//			for (int j = 0; j < arr.length; j++) {
-//				System.out.print(arr[i][j]);
-//			}
-//			System.out.println();
-//		}
-//		int start = 0;
-//		int end = 0;
 		nodes().forEach(s -> {
 			if (s.getId().equals(source)) {
 				start = s.getIndex();
@@ -97,27 +89,25 @@ public class IntegratedGraph extends SingleGraph {
 		}
 		D[start] = 1;
 		L[0] = start;
-		checkPath(1, end, arr);
-		if (hasPath == 0) {
-			LogEvent.emitLogEvent(
-					new LogEvent(LogEvent.Cause.INFO, "No Path From " + getNode(start) + " to " + getNode(end)));
-		}
+		checkPath(1, end, arr, paths);
 		return paths;
 	}
 
-	public void checkPath(int number_edge, int end, int[][] arr) {
+	public void checkPath(int number_edge, int end, int[][] arr, List<List<Edge>> paths) {
 		if (L[number_edge - 1] == end) {
 			hasPath++;
-			String msg = "Path:" + getNode(L[0]);
-			for (int i = 1; i < number_edge; ++i)
-				msg += "->" + getNode(L[i]);
-			LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, msg));
+			List<Edge> path = new ArrayList<Edge>();
+			for (int i = 1; i < number_edge; ++i) {
+				Edge edge = getNode(L[i - 1]).getEdgeBetween(getNode(L[i]));
+				path.add(edge);
+			}
+			paths.add(path);
 		} else {
 			for (int i = 0; i < getNodeCount(); ++i) {
 				if (arr[L[number_edge - 1]][i] != 0 && D[i] == 0) {
 					L[number_edge] = i;
 					D[i] = 1;
-					checkPath(number_edge + 1, end, arr);
+					checkPath(number_edge + 1, end, arr, paths);
 					L[number_edge] = 0;
 					D[i] = 0;
 				}
@@ -125,8 +115,29 @@ public class IntegratedGraph extends SingleGraph {
 		}
 	}
 
-	public void toImage(String name) {
-		// TODO
+	public void exportImg(JPanel view) throws IOException {
+
+		final JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+
+		int result = fileChooser.showSaveDialog(fileChooser);
+		if (result == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = fileChooser.getSelectedFile();
+			BufferedImage image = new BufferedImage(view.getSize().width, view.getSize().height,
+					BufferedImage.TYPE_INT_RGB);
+			Graphics2D g2 = image.createGraphics();
+			view.paint(g2);
+			try {
+				ImageIO.write(image, "png", new File(selectedFile.getAbsolutePath() + ".png"));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void findPath() {
+		// TODO Auto-generated method stub
 
 	}
 

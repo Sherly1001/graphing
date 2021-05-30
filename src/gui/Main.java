@@ -6,10 +6,17 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.io.IOException;
+
 import javax.swing.*;
 import org.graphstream.graph.*;
+import org.graphstream.ui.geom.Point2;
+import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.swing_viewer.*;
 import org.graphstream.ui.view.Viewer;
+import org.graphstream.ui.view.camera.Camera;
 
 import event.LogEvent;
 import event.LogListener;
@@ -41,23 +48,15 @@ public class Main extends JFrame {
 		graph.setAttribute("ui.antialias");
 		graph.setAttribute("ui.stylesheet", "url('file://bin/gui/graph.css')");
 
-		LogEvent.addLogListener(new LogListener() {
-			@Override
-			public void run(LogEvent e) {
-				// TODO Auto-generated method stub
-				if (e.cause == LogEvent.Cause.INFO) {
-					System.out.println("INFO: " + e.message);
-				}
-			}
-		});
+		Viewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
+		viewer.enableAutoLayout();
 
-		Viewer viewer = graph.display();
 		try {
-			graph.loadFromFile("inputs/input.txt");
+			graph.loadFromFile(ImportFile.getUrl());
+//			graph.findAllPath("2", "12");
 		} catch (Exception e) {
-			// TODO: handle exception
+			System.out.println(e);
 		}
-		graph.findAllPath("2", "12");
 
 		for (Node n : graph) {
 			n.setAttribute("ui.label", n.getId());
@@ -67,7 +66,6 @@ public class Main extends JFrame {
 	    final JPanel panel1 = new JPanel();
 	    final JPanel panel2 = new JPanel();
 	    final JPanel panel3 = new JPanel();
-	    final JTextArea planetDescription = new JTextArea();
 	      
 	    JMenu fileMenu = new JMenu("File");
 	    fileMenu.setBounds(0, 0, 100, 20);
@@ -111,25 +109,39 @@ public class Main extends JFrame {
       	panel2.setPreferredSize(new Dimension(250, 400));
       	panel2.setMaximumSize(new Dimension(400, 600));
       	panel2.setMinimumSize(new Dimension(250, 400));
+      	panel2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Controller"));
+      	panel2.setBackground(Color.white);
+      	panel2.setLayout(null);
       	
       	panel3.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
+		ViewPanel view = (ViewPanel) viewer.addDefaultView(false);
+		view.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Graph"));
 		
-		ViewPanel view = (ViewPanel) viewer.getDefaultView();
-		view.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "graph"));
-
+		view.getCamera().setViewPercent(1);
+		view.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				e.consume();
+				int i = e.getWheelRotation();
+				double factor = Math.pow(1.25, i);
+				Camera cam = view.getCamera();
+				double zoom = cam.getViewPercent() * factor;
+				Point2 pxCenter = cam.transformGuToPx(cam.getViewCenter().x, cam.getViewCenter().y, 0);
+				Point3 guClicked = cam.transformPxToGu(e.getX(), e.getY());
+				double newRatioPx2Gu = cam.getMetrics().ratioPx2Gu / factor;
+				double x = guClicked.x + (pxCenter.x - e.getX()) / newRatioPx2Gu;
+				double y = guClicked.y - (pxCenter.y - e.getY()) / newRatioPx2Gu;
+				cam.setViewCenter(x, y, 0);
+				cam.setViewPercent(zoom);
+			}
+		});
 		gbc.gridx = 1;
-		gbc.gridy = 0;
-		gbc.gridwidth = gbc.gridheight = 1;
+		gbc.gridy = 1;
 		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weightx = 30;
-		gbc.weighty = 70;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
 		panel1.add(view, gbc);
-
-		panel2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Controller"));
-		panel2.setBackground(Color.white);
-	    
-		panel2.setLayout(null);
 		
 		JLabel startLabel = new JLabel("Start node:");
 		JLabel stopLabel = new JLabel("Stop node:");
@@ -183,7 +195,6 @@ public class Main extends JFrame {
 		panel2.add(backButton);
 		
 		logPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "logs"));
-
 		gbc.gridy = 1;
 		gbc.gridwidth = 2;
 		gbc.weighty = 30;
@@ -201,5 +212,25 @@ public class Main extends JFrame {
 		setSize(900, 640);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		LogEvent.addLogListener(new LogListener() {
+			@Override
+			public void run(LogEvent e) {
+				// TODO Auto-generated method stub
+				if (e.cause == LogEvent.Cause.INFO) {
+					System.out.println("INFO: " + e.message);
+				} else if (e.cause == LogEvent.Cause.EXPORT_IMAGE) {
+					try {
+						graph.exportImg(view);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						System.out.println("Export image error " + e1.getMessage());
+					}
+				} else if (e.cause == LogEvent.Cause.FIND_PATH) {
+					// graph.findAllPath("2","12");
+
+				}
+			}
+		});
 	}
 }
