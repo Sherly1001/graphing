@@ -66,7 +66,6 @@ public class Main extends JFrame {
 		}
 
 		JMenuBar menuBar = new JMenuBar();
-		final JPanel panel = new JPanel();
 
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setBounds(0, 0, 100, 20);
@@ -118,13 +117,6 @@ public class Main extends JFrame {
 		menuBar.add(fileMenu);
 		setJMenuBar(menuBar);
 
-		panel.setLayout(new GridBagLayout());
-		panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		panel.setPreferredSize(new Dimension(600, 400));
-		panel.setMaximumSize(new Dimension(1000, 600));
-		panel.setMinimumSize(new Dimension(500, 300));
-
-		controlPanel.setLayout(new GridBagLayout());
 		controlPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		controlPanel.setPreferredSize(new Dimension(250, 400));
 		controlPanel.setMaximumSize(new Dimension(400, 600));
@@ -133,13 +125,12 @@ public class Main extends JFrame {
 		controlPanel.setBackground(Color.white);
 		controlPanel.setLayout(null);
 
-		// panel3.setLayout(new GridBagLayout());
-
-		GridBagConstraints gbc = new GridBagConstraints();
 		ViewPanel view = (ViewPanel) viewer.addDefaultView(false);
 		view.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Graph"));
-		view.setLayout(new GridBagLayout());
 		view.setAlignmentX(Component.LEFT_ALIGNMENT);
+		view.setPreferredSize(new Dimension(600, 400));
+		view.setMaximumSize(new Dimension(1000, 600));
+		view.setMinimumSize(new Dimension(500, 300));
 
 		view.getCamera().setViewPercent(1);
 		view.addMouseWheelListener(new MouseWheelListener() {
@@ -159,17 +150,11 @@ public class Main extends JFrame {
 				cam.setViewPercent(zoom);
 			}
 		});
-		gbc.gridx = 1;
-		gbc.gridy = 1;
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weightx = 1;
-		gbc.weighty = 1;
-		panel.add(view, gbc);
 
-		logPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "logs"));
+		logPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Logs"));
 		logPanel.setBackground(Color.white);
 
-		JSplitPane innerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panel, controlPanel);
+		JSplitPane innerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, view, controlPanel);
 		innerPane.setContinuousLayout(true);
 		innerPane.setOneTouchExpandable(true);
 		JSplitPane outerPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, innerPane, logPanel);
