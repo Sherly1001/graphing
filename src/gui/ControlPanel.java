@@ -1,6 +1,7 @@
 package gui;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.awt.*;
 import java.awt.event.*;
@@ -11,7 +12,7 @@ import javax.imageio.ImageIO;
 
 import event.*;
 import graph.IntegratedGraph;
-import org.graphstream.graph.Edge;
+import org.graphstream.graph.*;
 
 public class ControlPanel extends JPanel {
 	private IntegratedGraph graph;
@@ -37,7 +38,8 @@ public class ControlPanel extends JPanel {
 
 	public ControlPanel(IntegratedGraph graph) {
 		this.graph = graph;
-		List<List<Edge>> paths = null;
+		Object[] paths = { null };
+		Node[] currentNode = { null };
 		JLabel startLabel = new JLabel("Start node:");
 		JLabel stopLabel = new JLabel("Stop node:");
 		startLabel.setBounds(10, 40, 150, 25);
@@ -138,7 +140,7 @@ public class ControlPanel extends JPanel {
 				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.RUN));
 			}
 		});
-		
+
 		JButton stopButton = new JButton("Stop");
 		stopButton.setBounds(150, 280, 80, 40);
 		add(stopButton);
@@ -149,6 +151,97 @@ public class ControlPanel extends JPanel {
 				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.STOP));
 			}
 		});
+
+		JButton nextNode = new JButton("Next Node");
+		JButton resetNode = new JButton("Reset");
+		JLabel cblb = new JLabel("Next node: ");
+		JComboBox cb2 = new JComboBox();
+
+		nextNode.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				List<List<Edge>> ps = (List<List<Edge>>) paths[0];
+				if (ps == null || ps.size() < 1)
+					return;
+
+				Node nextNode = graph.getNode(cb2.getSelectedItem() + "");
+
+				if (nextNode == null) {
+					LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.ERROR, "no next node"));
+					return;
+				}
+
+				currentNode[0].getEdgeToward(nextNode).setAttribute("ui.class", "red");
+				currentNode[0] = nextNode;
+				currentNode[0].setAttribute("ui.class", "marked");
+
+				List<Node> nodes = getNextNode(currentNode[0], ps);
+				cb2.removeAllItems();
+				nodes.forEach(n -> {
+					cb2.addItem(n.getId());
+				});
+			}
+		});
+
+		resetNode.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				graph.nodes().forEach(n -> n.removeAttribute("ui.class"));
+				graph.edges().forEach(n -> n.removeAttribute("ui.class"));
+				graph.getNode(tf1.getText()).setAttribute("ui.class", "marked");
+				List<List<Edge>> ps = (List<List<Edge>>) paths[0];
+				if (ps == null || ps.size() < 1)
+					return;
+				currentNode[0] = ps.get(0).get(0).getSourceNode();
+				List<Node> nodes = getNextNode(currentNode[0], ps);
+				cb2.removeAllItems();
+				nodes.forEach(n -> {
+					cb2.addItem(n.getId());
+				});
+
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, "route reseted"));
+			}
+		});
+
+		LogEvent.addLogListener(new LogListener() {
+			@Override
+			public void run(LogEvent e) {
+				if (e.cause == LogEvent.Cause.FIND_PATH) {
+					paths[0] = e.paths;
+					List<List<Edge>> ps = (List<List<Edge>>) paths[0];
+					if (ps == null || ps.size() < 1)
+						return;
+					currentNode[0] = ps.get(0).get(0).getSourceNode();
+					List<Node> nodes = getNextNode(currentNode[0], ps);
+					cb2.removeAllItems();
+					nodes.forEach(n -> {
+						cb2.addItem(n.getId());
+					});
+				}
+			}
+		});
+
+		cblb.setBounds(10, 350, 140, 30);
+		cb2.setBounds(90, 350, 140, 30);
+		resetNode.setBounds(20, 390, 100, 35);
+		nextNode.setBounds(140, 390, 100, 35);
+		add(cblb);
+		add(cb2);
+		add(resetNode);
+		add(nextNode);
 	}
 
+	private static List<Node> getNextNode(Node currentNode, List<List<Edge>> paths) {
+		List<Node> nodes = new ArrayList<>();
+		currentNode.edges().forEach(e -> {
+			if (e.getTargetNode() == currentNode)
+				return;
+			for (List<Edge> path : paths) {
+				if (path.contains(e) && !nodes.contains(e.getTargetNode())) {
+					nodes.add(e.getTargetNode());
+				}
+			}
+		});
+		return nodes;
+	}
 }

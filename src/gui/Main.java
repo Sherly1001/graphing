@@ -109,9 +109,9 @@ public class Main extends JFrame {
 		setJMenuBar(menuBar);
 
 		controlPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		controlPanel.setPreferredSize(new Dimension(250, 400));
+		controlPanel.setPreferredSize(new Dimension(250, 450));
 		controlPanel.setMaximumSize(new Dimension(400, 600));
-		controlPanel.setMinimumSize(new Dimension(250, 400));
+		controlPanel.setMinimumSize(new Dimension(250, 450));
 		controlPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Controller"));
 		controlPanel.setBackground(Color.white);
 		controlPanel.setLayout(null);
@@ -155,7 +155,7 @@ public class Main extends JFrame {
 
 		ctn.add(outerPane, BorderLayout.CENTER);
 		setVisible(true);
-		setSize(900, 640);
+		setSize(960, 720);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
