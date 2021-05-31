@@ -3,6 +3,8 @@ package gui;
 import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
+import java.util.Timer;
 
 import javax.imageio.ImageIO;
 
@@ -24,6 +26,11 @@ public class Main extends JFrame {
 	private Container ctn = getContentPane();
 	private ControlPanel controlPanel = new ControlPanel(graph);
 	private LogPanel logPanel = new LogPanel(graph);
+
+	private List<List<Edge>> paths;
+	private List<Edge> selectedRoute;
+	private int move[] = { 0 };
+	private ScheduledTasks te1;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -157,18 +164,15 @@ public class Main extends JFrame {
 			public void run(LogEvent e) {
 				if (e.cause == LogEvent.Cause.INFO) {
 					System.out.println("INFO: " + e.message);
+				} else if (e.cause == LogEvent.Cause.ERROR) {
+					System.err.println("ERROR: " + e.message);
 				} else if (e.cause == LogEvent.Cause.EXPORT_IMAGE) {
 					try {
 						graph.exportImg(view);
 					} catch (IOException e1) {
-						System.out.println("Export image error " + e1.getMessage());
+						LogEvent.emitLogEvent(
+								new LogEvent(LogEvent.Cause.ERROR, "Export image error " + e1.getMessage()));
 					}
-				} else if (e.cause == LogEvent.Cause.NEXT_NODE) {
-					System.out.print(e.message);
-					int index = Integer.parseInt(e.message) - 1;
-					graph.choise_path(index, "2", "12", 1);
-				} else if (e.cause == LogEvent.Cause.PERIOUS_NODE) {
-					graph.choise_path(1, "2", "12", -1);
 				} else if (e.cause == LogEvent.Cause.OPEN_FILE) {
 					try {
 						graph.loadFromFile(ImportFile.getUrl());
@@ -178,8 +182,87 @@ public class Main extends JFrame {
 					for (Node n : graph) {
 						n.setAttribute("ui.label", n.getId());
 					}
+				} else if (e.cause == LogEvent.Cause.FIND_PATH) {
+					paths = e.paths;
+					graph.nodes().forEach(node -> node.removeAttribute("ui.class"));
+					graph.edges().forEach(edge -> edge.removeAttribute("ui.class"));
+
+					LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, "Found " + paths.size() + " route(s)."));
+					int num = 0;
+					for (List<Edge> route : paths) {
+						num += 1;
+						String stringRoute = "";
+						for (Edge edge : route) {
+							stringRoute += edge.getSourceNode() + "->" + edge.getTargetNode() + ", ";
+						}
+						LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO,
+								"route " + num + ": " + stringRoute.replaceAll(", $", "")));
+					}
+
+					if (paths != null && paths.size() > 0) {
+						selectedRoute = paths.get(0);
+						move[0] = 0;
+						paths.get(0).get(0).getSourceNode().setAttribute("ui.class", "marked");
+
+						String stringRoute = "";
+						for (Edge edge : selectedRoute) {
+							stringRoute += edge.getSourceNode() + "->" + edge.getTargetNode() + ", ";
+						}
+						LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO,
+								"selected route 1: " + stringRoute.replaceAll(", $", "")));
+					}
+				} else if (e.cause == LogEvent.Cause.SELECT_ROUTE) {
+					if (paths != null && paths.size() > 0) {
+						selectedRoute = paths.get(Integer.parseInt(e.message.replace("route ", "")) - 1);
+						move[0] = 0;
+						graph.nodes().forEach(node -> node.removeAttribute("ui.class"));
+						graph.edges().forEach(edge -> edge.removeAttribute("ui.class"));
+						selectedRoute.get(0).getSourceNode().setAttribute("ui.class", "marked");
+
+						String stringRoute = "";
+						for (Edge edge : selectedRoute) {
+							stringRoute += edge.getSourceNode() + "->" + edge.getTargetNode() + ", ";
+						}
+						LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO,
+								"selected " + e.message + ": " + stringRoute.replaceAll(", $", "")));
+					}
+				} else if (e.cause == LogEvent.Cause.NEXT_NODE) {
+					if (selectedRoute == null || selectedRoute.size() <= 0) {
+						LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.ERROR, "no route selected"));
+					} else {
+						if (move[0] < selectedRoute.size()) {
+							Edge currentEdge = selectedRoute.get(move[0]);
+							currentEdge.setAttribute("ui.class", "red");
+							currentEdge.getTargetNode().setAttribute("ui.class", "marked");
+							move[0] += 1;
+						} else {
+							LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.ERROR, "no next node"));
+						}
+					}
+				} else if (e.cause == LogEvent.Cause.PERIOUS_NODE) {
+					if (selectedRoute == null || selectedRoute.size() <= 0) {
+						LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.ERROR, "no route selected"));
+					} else {
+						if (move[0] == 0) {
+							LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.ERROR, "no previous node"));
+						} else {
+							move[0] -= 1;
+							Edge currentEdge = selectedRoute.get(move[0]);
+							currentEdge.removeAttribute("ui.class");
+							currentEdge.getTargetNode().removeAttribute("ui.class");
+						}
+					}
+				} else if (e.cause == LogEvent.Cause.RUN) {
+					te1 = new ScheduledTasks("Run path", selectedRoute, move);
+					Timer t = new Timer();
+					t.scheduleAtFixedRate(te1, 0, 1000);
+					LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, "Running"));
+				} else if (e.cause == LogEvent.Cause.STOP) {
+					te1.cancel();
+					LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, "Stopped"));
 				}
 			}
 		});
+
 	}
 }

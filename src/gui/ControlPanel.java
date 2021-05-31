@@ -1,14 +1,17 @@
 package gui;
 
 import java.io.*;
+import java.util.List;
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+
 import javax.imageio.ImageIO;
 
 import event.*;
 import graph.IntegratedGraph;
+import org.graphstream.graph.Edge;
 
 public class ControlPanel extends JPanel {
 	private IntegratedGraph graph;
@@ -34,6 +37,7 @@ public class ControlPanel extends JPanel {
 
 	public ControlPanel(IntegratedGraph graph) {
 		this.graph = graph;
+		List<List<Edge>> paths = null;
 		JLabel startLabel = new JLabel("Start node:");
 		JLabel stopLabel = new JLabel("Stop node:");
 		startLabel.setBounds(10, 40, 150, 25);
@@ -58,64 +62,47 @@ public class ControlPanel extends JPanel {
 		findButton.setBounds(30, 120, 190, 35);
 		add(findButton);
 
-		JLabel selectLabel = new JLabel("Select path:");
+		JLabel selectLabel = new JLabel("Select route:");
 		selectLabel.setBounds(10, 170, 100, 25);
 		add(selectLabel);
-		String paths[] = {};
-
-		JComboBox cb = new JComboBox(paths);
-		cb.addItem("Select path");
+		JComboBox cb = new JComboBox();
 		cb.setBounds(90, 170, 140, 25);
 		add(cb);
 
 		JButton runButton = new JButton("Run");
-		JButton resetButton = new JButton("Reset");
+		JButton backButton = new JButton("Reset");
 		try {
 			Image run = ImageIO.read(new File("images/run.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
 			runButton.setIcon(new ImageIcon(run));
 			Image reset = ImageIO.read(new File("images/reset.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
-			resetButton.setIcon(new ImageIcon(reset));
+			backButton.setIcon(new ImageIcon(reset));
 		} catch (Exception e) {
 		}
 
-		resetButton.setBounds(20, 210, 100, 35);
-		add(resetButton);
+		backButton.setBounds(20, 210, 100, 35);
+		add(backButton);
 		runButton.setBounds(140, 210, 100, 35);
 		add(runButton);
 		
-		JLabel selectNodeLabel = new JLabel("Select node:");
-		selectNodeLabel.setBounds(10, 260, 100, 25);
-		add(selectNodeLabel);
-		String nodes[] = {};
-		JComboBox cbNodes = new JComboBox(nodes);
-		cbNodes.addItem("Select node");
-		cbNodes.setBounds(90, 260, 140, 25);
-		add(cbNodes);
-		
-		JButton nextButton = new JButton("Next");
-		JButton backButton = new JButton("Back");
-		try {
-			Image next = ImageIO.read(new File("images/next.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
-			nextButton.setIcon(new ImageIcon(next));
-			Image back = ImageIO.read(new File("images/back.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
-			backButton.setIcon(new ImageIcon(back));
-		} catch (Exception e) {
-		}
-
-		backButton.setBounds(20, 300, 100, 35);
-		add(backButton);
-		nextButton.setBounds(140, 300, 100, 35);
-		add(nextButton);
-
 		findButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.FIND_PATH, tf1.getText() + "|" + tf2.getText()));
-				int numPath = graph.findAllPath(tf1.getText(), tf2.getText()).size();
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.INFO, "Finding paths."));
+				List<List<Edge>> paths = graph.findAllPath(tf1.getText(), tf2.getText());
 				cb.removeAllItems();
-				cb.addItem("Select Path");
-				for (int i = 0; i < numPath; i++) {
-					cb.addItem(i + 1);
+				for (int i = 0; i < paths.size(); ++i) {
+					cb.addItem("route " + (i + 1));
+				}
+				LogEvent.emitLogEvent(
+						new LogEvent(LogEvent.Cause.FIND_PATH, tf1.getText() + "|" + tf2.getText(), paths));
+			}
+		});
+
+		cb.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.SELECT_ROUTE, e.getItem() + ""));
 				}
 			}
 		});
@@ -123,16 +110,45 @@ public class ControlPanel extends JPanel {
 		runButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.NEXT_NODE, cb.getSelectedItem() + ""));
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.NEXT_NODE));
 			}
 		});
-		resetButton.addActionListener(new ActionListener() {
+
+		backButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.PERIOUS_NODE));
 			}
 		});
 
+		JButton autoButton = new JButton("Run");
+
+		try {
+			Image start = ImageIO.read(new File("images/start.png")).getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+			runButton.setIcon(new ImageIcon(start));
+		} catch (Exception e) {
+		}
+
+		autoButton.setBounds(30, 280, 80, 40);
+		add(autoButton);
+
+		autoButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.RUN));
+			}
+		});
+		
+		JButton stopButton = new JButton("Stop");
+		stopButton.setBounds(150, 280, 80, 40);
+		add(stopButton);
+
+		stopButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.STOP));
+			}
+		});
 	}
 
 }

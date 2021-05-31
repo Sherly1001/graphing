@@ -11,6 +11,8 @@ import javax.swing.*;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 
+import event.LogEvent;
+
 public class IntegratedGraph extends SingleGraph {
 
 	private int hasPath = 0;
@@ -65,6 +67,18 @@ public class IntegratedGraph extends SingleGraph {
 		List<List<Edge>> paths = new ArrayList<List<Edge>>();
 		// TODO
 
+		Node sourceNode = getNode(source);
+		Node destinationNode = getNode(destination);
+
+		if (sourceNode == null) {
+			LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.ERROR, "Start node has not found!"));
+			return paths;
+		}
+		if (destinationNode == null) {
+			LogEvent.emitLogEvent(new LogEvent(LogEvent.Cause.ERROR, "End node has not found!"));
+			return paths;
+		}
+
 		int[][] arr = new int[getNodeCount()][getNodeCount()];
 		for (int i = 0; i < arr.length; i++) {
 			for (int j = 0; j < arr.length; j++) {
@@ -75,41 +89,18 @@ public class IntegratedGraph extends SingleGraph {
 			arr[s.getSourceNode().getIndex()][s.getTargetNode().getIndex()] = 1;
 		});
 
-		nodes().forEach(s -> {
-			if (s.getId().equals(source)) {
-				start = s.getIndex();
-				has_start += 1;
-			}
-			if (s.getId().equals(destination)) {
-				end = s.getIndex();
-				has_end += 1;
-			}
-		});
-		if (has_start == 0 || has_end == 0) {
-			if (has_start == 0) {
-				System.out.println("Start node has not found!");
-			}
-			if (has_end == 0) {
-				System.out.println("End node has not found!");
-			}
-		} else {
-			visited = new int[getNodeCount()];
-			load_path = new int[getNodeCount()];
-			for (int i = 0; i < getNodeCount(); i++) {
-				visited[i] = 0;
-				load_path[i] = 0;
-			}
-			visited[start] = 1;
-			load_path[0] = start;
-			checkPath(1, end, arr, paths);
-//		for (Iterator iterator = paths.iterator(); iterator.hasNext();) {
-//			List<Edge> list = (List<Edge>) iterator.next();
-//			for (Iterator iterator2 = list.iterator(); iterator2.hasNext();) {
-//				Edge edge = (Edge) iterator2.next();
-//				System.out.println(edge.getId());
-//			}
-//		}
+		visited = new int[getNodeCount()];
+		load_path = new int[getNodeCount()];
+		for (int i = 0; i < getNodeCount(); i++) {
+			visited[i] = 0;
+			load_path[i] = 0;
 		}
+		start = sourceNode.getIndex();
+		end = destinationNode.getIndex();
+		visited[start] = 1;
+		load_path[0] = start;
+		checkPath(1, end, arr, paths);
+
 		return paths;
 	}
 
@@ -118,7 +109,7 @@ public class IntegratedGraph extends SingleGraph {
 			hasPath++;
 			List<Edge> path = new ArrayList<Edge>();
 			for (int i = 1; i < number_edge; ++i) {
-				Edge edge = getNode(load_path[i - 1]).getEdgeBetween(getNode(load_path[i]));
+				Edge edge = getNode(load_path[i - 1]).getEdgeToward(getNode(load_path[i]));
 				path.add(edge);
 			}
 			paths.add(path);
@@ -160,38 +151,4 @@ public class IntegratedGraph extends SingleGraph {
 
 	}
 
-	public void choise_path(int index, String source, String destination, int choise) {
-		List<List<Edge>> pathList = findAllPath(source, destination);
-		List<Edge> path = new ArrayList<Edge>();
-		if (index > pathList.size() - 1) {
-			System.out.println("Path invalid");
-		} else {
-			path = pathList.get(index);
-			if (choise == -1) {
-				move = move;
-			} else {
-				move += choise;
-			}
-			if (move > path.size()) {
-				System.out.println("You shall not pass");
-				move--;
-			} else {
-				if (choise == 1) {
-					for (int i = 0; i < move; i++) {
-						path.get(i).getNode0().setAttribute("ui.class", "marked");
-						path.get(i).setAttribute("ui.class", "red");
-						path.get(i).getNode1().setAttribute("ui.class", "marked");
-					}
-				} else {
-					for (int i = 0; i < move; i++) {
-						path.get(i).removeAttribute("ui.class");
-						path.get(i).getNode0().removeAttribute("ui.class");
-						path.get(i).getNode1().removeAttribute("ui.class");
-					}
-					move = 0;
-				}
-			}
-
-		}
-	}
 }
